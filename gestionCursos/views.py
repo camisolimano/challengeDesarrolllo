@@ -5,9 +5,10 @@ from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Alumno, Curso, Sede
-from .forms import AlumnoForm,CursoForm
+from .forms import AlumnoForm,CursoForm,AltaBajaAlumnos
 from django.db.models import Q
 from datetime import date, datetime
+from django.contrib import messages
 
 # Create your views here.
 
@@ -176,4 +177,52 @@ def listado_Cursos(request):
     }
     return render(request,'listado_Cursos.html', context)
 
+
+
+
+def listado_Sedes(request):
+    errores = []
+    ciudad=request.GET.get('ciudad','').strip()
+    nombre=request.GET.get('nombre','').strip()
+
+ 
+    sedes=Sede.objects.all()
+
+    if nombre:
+        sedes=sedes.filter(nombre__icontains=nombre)
+        
+    if ciudad:
+        sedes=sedes.filter(ciudad__icontains=ciudad)
+ 
+    return render(request,'listado_Sedes.html', { 'sedes': sedes,
+})
+
+
+def alta_baja_cursos(request):
+    if request.method=="POST":
+       form=AltaBajaAlumnos(request.POST)
+       if form.is_valid():
+            cod_curso=form.cleaned_data['codigo_curso']
+            dni_al=form.cleaned_data['dni_alumno']          
+            accion=form.cleaned_data['accion']
+
+            try:
+               alumno=Alumno.objects.get(dni=dni_al)               
+               curso=Curso.objects.get(codigo_curso=cod_curso)
+
+               if accion == 'alta':
+                   curso.alumnos.add(alumno)
+                   messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
+               elif accion == 'baja':
+                    curso.alumnos.remove(alumno)
+                    messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} eliminado del curso.")
+            except Alumno.DoesNotExist:
+                messages.error(request, "El alumno con ese dni no existe.")
+            except Curso.DoesNotExist:
+                messages.error(request, "El curso con ese código no existe.")
+            return redirect('alta_baja_cursos')
+    else:
+        form=AltaBajaAlumnos(request.POST)
+
+    return render(request,'alta_baja_cursos.html',{'form': form })
 

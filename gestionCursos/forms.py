@@ -24,3 +24,8 @@ class CursoForm(ModelForm):
         model = Curso
         fields = ['codigo_curso','año_dictado', 'duracion', 'tema','costo_mensual','fecha_inicio','fecha_fin','alumnos','sede']
 
+class AltaBajaAlumnos(forms.Form):
+   
+    codigo_curso=forms.IntegerField(label="codigo_curso")
+    dni_alumno=forms.CharField(max_length=10,label="dni")
+    accion=forms.ChoiceField(choices=[('alta','Alta'),('baja','Baja')], label ="Accion")

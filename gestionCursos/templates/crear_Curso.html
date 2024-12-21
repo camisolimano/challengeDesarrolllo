@@ -49,12 +49,21 @@
 
                     <div class="form-group">
                         <label for="id_sede">Sede</label>
-                        {{ form.sede }} 
+                        <select name="sede" id="id_sede" class="form-control" required>
+                            {% for sede in form.fields.sede.queryset %}
+                                <option value="{{ sede.pk }}">{{ sede.nombre }}</option>
+                            {% endfor %}
+                        </select>
                     </div>
 
                     <div class="form-group">
                         <label for="id_alumnos">Alumnos</label>
-                        {{ form.alumnos }} 
+                        <select name="alumnos" id="id_alumnos" class="form-control" multiple required>
+                            {% for alumno in form.fields.alumnos.queryset %}
+                                <option value="{{ alumno.pk }}">{{ alumno.apellido }} - {{ alumno.dni }}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="form-text text-muted">Mantén presionada la tecla 'Ctrl' (o 'Cmd' en Mac) para seleccionar varios alumnos.</small>
                     </div>
 
                     <button type="submit" class="btn btn-primary btn-block">Guardar Curso</button>
@@ -64,3 +73,5 @@
     </div>
 </div>
 {% endblock %}
+
+

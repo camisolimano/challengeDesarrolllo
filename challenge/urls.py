@@ -32,6 +32,8 @@ urlpatterns = [
     path('listado_Alumnos/', views.listado_Alumnos, name='listado_Alumnos'),
     path('listado_Cursos/', views.listado_Cursos, name='listado_Cursos'),
     path('detalles_Alumno/', views.detalles_Alumno, name='detalles_Alumno'),
+    path('listado_Sedes/', views.listado_Sedes, name='listado_Sedes'),
+    path('alta_baja_cursos/', views.alta_baja_cursos, name='alta_baja_cursos'),
 
 
 ]
