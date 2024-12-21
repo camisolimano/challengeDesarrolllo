@@ -55,11 +55,16 @@ def borrar_Alumno(request):
     if request.method=="POST":
         dni_al=request.POST.get('dni')
         try:
-            alumno = Alumno.objects.get(dni=dni_al)   
-            alumno.delete()
-            return render(request, 'borrar_alumno.html', {'alumno': alumno, 'dni_alumno': dni_al})
-        except:
+            alumno = Alumno.objects.get(dni=dni_al)  
+            print("Alumno encontrado:", alumno)
+            if 'eliminar' in request.POST: 
+                alumno.delete()
+                return render(request, 'borrar_alumno.html', {'mensaje': 'Alumno borrado exitosamente'})
+            return render(request, 'borrar_alumno.html', {'alumno':alumno, 'dni': dni_al})
+
+        except Alumno.DoesNotExist:
             return render(request, 'borrar_alumno.html', {'error': 'No se encontró un alumno con ese DNI.'})
+    return render(request, 'borrar_alumno.html')
 
 def listado_Alumnos(request):
     errores = []
@@ -115,11 +120,12 @@ def borrar_Curso(request):
         codigo_str = request.POST.get('codigo_curso')
         try:
             codigo = int(codigo_str)
-            curso = Curso.objects.get(codigo_curso=codigo)   
-            curso.delete()
-            return render(request, 'borrar_curso.html', {'curso': curso, 'codigo': codigo})
-        except:
-            return render(request, 'borrar_curso.html', {'error': 'No se encontró el curso con ese codigo.'})
+            curso = Curso.objects.get(codigo_curso=codigo) 
+            if 'eliminar' in request.POST:   
+                curso.delete()
+                return render(request, 'borrar_Curso.html', {'mensaje': 'Curso borrado exitosamente'})
+            return render(request, 'borrar_Curso.html', {'curso': curso, 'codigo_curso': codigo})
+        except Curso.DoesNotExist:
+            return render(request, 'borrar_Curso.html', {'error': 'No se encontró el curso con ese codigo.'})
+    return render(request, 'borrar_Curso.html')
 
-
-        
