@@ -30,6 +30,8 @@ urlpatterns = [
     path('borrar_Alumno/', views.borrar_Alumno, name='borrar_Alumno'),
     path('borrar_Curso/', views.borrar_Curso, name='borrar_Curso'),
     path('listado_Alumnos/', views.listado_Alumnos, name='listado_Alumnos'),
+    path('listado_Cursos/', views.listado_Cursos, name='listado_Cursos'),
+    path('detalles_Alumno/', views.detalles_Alumno, name='detalles_Alumno'),
 
 
 ]

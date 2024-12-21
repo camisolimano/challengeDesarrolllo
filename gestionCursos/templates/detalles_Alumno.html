@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3>Buscar Alumno por DNI</h3>
+
+    <form method="get" action="{% url 'detalles_Alumno' %}">
+        <div class="form-group">
+            <label for="dni">DNI</label>
+            <input type="text" name="dni" id="dni" class="form-control" placeholder="Ingrese el DNI del alumno" value="{{ request.GET.dni }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Buscar</button>
+    </form>
+
+    {% if error %}
+        <div class="alert alert-danger mt-4">
+            <p>{{ error }}</p>
+        </div>
+    {% elif alumno %}
+        <div class="mt-4">
+            <h4>Detalles del Alumno:</h4>
+            <p><strong>Nombre y Apellido:</strong> {{ alumno.nombre }} {{ alumno.apellido }}</p>
+            <p><strong>Fecha de Nacimiento:</strong> {{ alumno.fecha_nac }}</p>
+            <p><strong>DNI:</strong> {{ alumno.dni }}</p>
+            <p><strong>Dirección:</strong> {{ alumno.direccion }}</p>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+

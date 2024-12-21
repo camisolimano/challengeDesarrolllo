@@ -66,6 +66,18 @@ def borrar_Alumno(request):
             return render(request, 'borrar_alumno.html', {'error': 'No se encontró un alumno con ese DNI.'})
     return render(request, 'borrar_alumno.html')
 
+def detalles_Alumno(request):
+    dni=request.GET.get('dni','')
+    alumno=None
+    if dni:
+        try:
+            alumno=Alumno.objects.get(dni=dni)
+        except Alumno.DoesNotExist:
+            return render(request,'detalles_Alumno.html', {'error' : 'No hay ningun alumno con ese DNI'})
+
+    return render(request,'detalles_Alumno.html', {'alumno' : alumno})
+
+
 def listado_Alumnos(request):
     errores = []
     nombre_al=request.GET.get('nombre','')
@@ -128,4 +140,40 @@ def borrar_Curso(request):
         except Curso.DoesNotExist:
             return render(request, 'borrar_Curso.html', {'error': 'No se encontró el curso con ese codigo.'})
     return render(request, 'borrar_Curso.html')
+
+def listado_Cursos(request):
+    errores = []
+    duracion=request.GET.get('duracion','')
+    año_dictado=request.GET.get('año_dictado','')
+    fecha_inicio=request.GET.get('fecha_inicio','')
+    sede=request.GET.get('sede','')
+    costo=request.GET.get('costo_mensual','')
+
+    cursos=Curso.objects.all()
+
+    if duracion:
+        cursos=cursos.filter(duracion=duracion)
+        
+    if año_dictado:
+        cursos=cursos.filter(año_dictado=año_dictado)
+
+    if fecha_inicio:
+        try:
+            fecha_ini=datetime.strptime(fecha_inicio,'%Y-%m-%d').date()
+            cursos=cursos.filter(fecha_inicio=fecha_ini)
+        except ValueError:
+            errores.append("Formato de fecha inválido. Use YYYY-MM-DD")
+
+    if sede:
+       cursos = cursos.filter(sede__nombre__icontains=sede)
+  
+    if costo:
+       cursos = cursos.filter(costo_mensual=costo)
+  
+    context = {
+        'cursos': cursos,
+        'errores': errores,
+    }
+    return render(request,'listado_Cursos.html', context)
+
 
