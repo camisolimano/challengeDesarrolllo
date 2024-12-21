@@ -6,6 +6,8 @@ from django.utils import timezone
 from django.contrib.auth.decorators import login_required
 from .models import Alumno, Curso, Sede
 from .forms import AlumnoForm,CursoForm
+from django.db.models import Q
+from datetime import date, datetime
 
 # Create your views here.
 
@@ -59,9 +61,43 @@ def borrar_Alumno(request):
         except:
             return render(request, 'borrar_alumno.html', {'error': 'No se encontró un alumno con ese DNI.'})
 
-    return render(request, 'borrar_alumno.html')
+def listado_Alumnos(request):
+    errores = []
+    nombre_al=request.GET.get('nombre','')
+    apellido_al=request.GET.get('apellido','')
+    fecha_nac_al=request.GET.get('fecha_nac','')
+    edad=request.GET.get('edad','')
 
+    alumnos=Alumno.objects.all()
 
+    if nombre_al:
+        alumnos=alumnos.filter(Q(nombre=nombre_al))
+        
+    if apellido_al:
+        alumnos=alumnos.filter(Q(apellido=apellido_al))
+
+    if fecha_nac_al:
+        try:
+            fecha_nac=datetime.strptime(fecha_nac_al,'%Y-%m-%d').date()
+            alumnos=alumnos.filter(fecha_nac=fecha_nac)
+        except ValueError:
+            errores.append("Formato de fecha inválido. Use YYYY-MM-DD")
+
+    if edad:
+       edad=int(edad)
+       hoy=date.today()
+       fecha_i=hoy.replace(year=hoy.year-edad)
+       fecha_f=hoy.replace(year=hoy.year-edad-1)
+       alumnos = alumnos.filter(fecha_nac__lte=fecha_i, fecha_nac__gt=fecha_f)
+    
+    for alumno in alumnos:
+        alumno.edad = (date.today() - alumno.fecha_nac).days // 365
+
+    context = {
+        'alumnos': alumnos,
+        'errores': errores,
+    }
+    return render(request,'listado_Alumnos.html', context)
 
 def crear_Curso(request):
     if request.method == 'GET':
@@ -85,6 +121,5 @@ def borrar_Curso(request):
         except:
             return render(request, 'borrar_curso.html', {'error': 'No se encontró el curso con ese codigo.'})
 
-    return render(request, 'borrar_curso.html')
 
         
