@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <h1 class="text-dark">DBLANDIT</h1>
+            </div>
+            <div class="card p-4">
+                <h3 class="text-center mb-4">Eliminar Curso</h3>
+                <form method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="codigo_curso">Codigo del curso</label>
+                        <input type="text" name="codigo_curso"  class="form-control" placeholder="Ingresa el codigo del curso" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Buscar Curso</button>
+                </form>
+
+                {% if curso %}
+                <div class="alert alert-warning mt-4">
+                    <strong>¡Atención!</strong> El curso con codigo {{ curso.codigo }} ha sido encontrado.
+                    <form method="POST" class="mt-3">
+                        {% csrf_token %}
+                        <input type="hidden" name="codigo_curso" value="{{ codigo }}">
+                        <button type="submit" name="eliminar" class="btn btn-danger btn-block">Eliminar Curso</button>
+                    </form>
+                </div>
+                {% elif error %}
+                <div class="alert alert-danger mt-4">
+                    {{ error }}
+                </div>
+                {% endif %}
+
+               
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+

@@ -15,6 +15,7 @@ class Sede(models.Model):
     cant_aulas=models.IntegerField()
 
 class Curso(models.Model):
+    codigo_curso=models.IntegerField(primary_key=True)
     año_dictado=models.IntegerField()
     duracion=models.IntegerField()
     tema=models.CharField()

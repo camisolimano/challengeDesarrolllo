@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <h1 class="text-dark">DBLANDIT</h1>
+            </div>
+            <div class="card p-4">
+                <h3 class="text-center mb-4">Crear Curso</h3>
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="form-group">
+                        <label for="id_codigo_curso">Código Curso</label>
+                        <input type="number" name="codigo_curso" id="id_codigo_curso" class="form-control" placeholder="Ingresa el código del curso" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_año">Año</label>
+                        <input type="number" name="año_dictado" id="id_año" class="form-control" placeholder="Ingresa el año" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_duracion">Duración en días</label>
+                        <input type="number" name="duracion" id="id_duracion" class="form-control" placeholder="Ingresa la duración" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_tema">Tema</label>
+                        <input type="text" name="tema" id="id_tema" class="form-control" placeholder="Ingresa el tema" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_costo">Costo Mensual</label>
+                        <input type="number" name="costo_mensual" id="id_costo" class="form-control" step="0.01" placeholder="Ingresa el costo" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_fecha_inicio">Fecha de Inicio</label>
+                        <input type="date" name="fecha_inicio" id="id_fecha_inicio" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_fecha_fin">Fecha de Fin</label>
+                        <input type="date" name="fecha_fin" id="id_fecha_fin" class="form-control" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_sede">Sede</label>
+                        {{ form.sede }} 
+                    </div>
+
+                    <div class="form-group">
+                        <label for="id_alumnos">Alumnos</label>
+                        {{ form.alumnos }} 
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Guardar Curso</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

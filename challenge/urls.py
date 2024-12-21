@@ -16,7 +16,19 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from django.views.generic import RedirectView
+
+from gestionCursos import views
 
 urlpatterns = [
+    path('', RedirectView.as_view(url='/signup/')),
     path('admin/', admin.site.urls),
+    path('signup/', views.signup, name='signup'),
+    path('signin/', views.signin, name='signin'),
+    path('crear_Alumno/', views.crear_Alumno, name='crear_Alumno'),
+    path('crear_Curso/', views.crear_Curso, name='crear_Curso'),
+    path('borrar_Alumno/', views.borrar_Alumno, name='borrar_Alumno'),
+    path('borrar_Curso/', views.borrar_Curso, name='borrar_Curso'),
+
+
 ]
