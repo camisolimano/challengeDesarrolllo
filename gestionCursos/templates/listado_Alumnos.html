@@ -4,11 +4,8 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="text-center mb-4">
-                <h1 class="text-dark">DBLANDIT</h1>
-            </div>
             <div class="card p-4">
-                <h3 class="text-center mb-4">Listado de Alumnos</h3>
+                <h3 class="text-center mb-4"  style="color: #ff4c29;">Listado de Alumnos</h3>
 
                 {% if errores %}
                     <div class="alert alert-danger">
@@ -98,9 +95,18 @@
                         {% endif %}
 
                         {% for num in alumnos.paginator.page_range %}
-                            <li class="page-item {% if alumnos.number == num %}active{% endif %}">
-                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
-                            </li>
+                            {% if num > alumnos.number|add:'-2' and num < alumnos.number|add:'2' %}
+                                <li class="page-item {% if alumnos.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% elif num == 1 or num == alumnos.paginator.num_pages %}
+                                <li class="page-item {% if alumnos.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% if num < alumnos.number|add:'-2' %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endif %}
                         {% endfor %}
 
                         {% if alumnos.has_next %}
@@ -116,7 +122,6 @@
                         {% endif %}
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>

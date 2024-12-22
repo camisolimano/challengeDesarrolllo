@@ -9,12 +9,16 @@ from .models import Alumno, Curso, Sede,Inscripcion_Curso_Alumno
 from .forms import AlumnoForm,CursoForm,AltaBajaAlumnos
 from django.db.models import Q,Avg
 from datetime import date, datetime
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
 
 # Create your views here.
 
 def home(request):
     return render(request, 'home.html')
+
+def pagina_principal(request):
+    return render(request, 'pagina_principal.html')
 
 def signup(request):
     if request.method=="GET":
@@ -41,15 +45,20 @@ def signin(request):
         if user is None:
             return render(request, 'signin.html', {"form": AuthenticationForm, "error": "Usuario o contraseña incorrecta."})
         login(request, user)
-        return redirect('singin/')
+        return redirect('pagina_principal')
 
 def crear_Alumno(request):
     if request.method == 'GET':
         return render(request, 'crear_Alumno.html', {"form": AlumnoForm })
     else:
         alumno=AlumnoForm(request.POST)
-        alumno.save()
-    return redirect('alumnos/')
+        if alumno.is_valid():
+            alumno.save()
+            messages.success(request, "El alumno se creó exitosamente.")
+            return redirect('crear_Alumno')
+        else:
+            messages.error(request, "Hubo un error al crear el alumno.")
+            return render(request, 'crear_Alumno.html', {"form": alumno})
 
 
 
@@ -72,10 +81,13 @@ def detalles_Alumno(request):
     dni=request.GET.get('dni','')
     alumno=None
     cursos=None
+    inscripciones=None
     if dni:
         try:
             alumno=Alumno.objects.get(dni=dni)
-            cursos = Inscripcion_Curso_Alumno.objects.filter(alumno=alumno).select_related('curso')
+            inscripciones = Inscripcion_Curso_Alumno.objects.filter(alumno=alumno).select_related('curso','curso__sede')
+            cursos = [inscripcion for inscripcion in inscripciones if inscripcion.curso.es_activo]
+
         except Alumno.DoesNotExist:
             return render(request,'detalles_Alumno.html', {'error' : 'No hay ningun alumno con ese DNI'})
 
@@ -119,6 +131,19 @@ def modificar_nota(request,alumno_id, codigo_curso):
         
         return render(request, 'modificar_nota.html', {'alumno': alumno, 'curso': curso, 'inscripcion': inscripcion})
 
+
+def historial_Alumno(request,dni):
+    try:
+        alumno=Alumno.objects.get(dni=dni)
+        inscripciones = Inscripcion_Curso_Alumno.objects.filter(alumno=alumno).select_related('curso','curso__sede')
+    except Alumno.DoesNotExist:
+        return render('historial_Alumno.html',{'error': 'No hay ningún alumno con ese DNI.'})
+            
+    return render(request, 'historial_Alumno.html',{'alumno': alumno, 'inscripciones': inscripciones})
+
+
+
+
 def listado_Alumnos(request):
     errores = []
     nombre_al=request.GET.get('nombre','')
@@ -151,6 +176,17 @@ def listado_Alumnos(request):
     for alumno in alumnos:
         alumno.edad = (date.today() - alumno.fecha_nac).days // 365
 
+    paginator=Paginator(alumnos,5)
+    page=request.GET.get('page')
+
+    try:
+            alumnos = paginator.page(page)
+    except PageNotAnInteger:
+            alumnos = paginator.page(1)
+    except EmptyPage:
+            alumnos = paginator.page(paginator.num_pages)
+
+    
     context = {
         'alumnos': alumnos,
         'errores': errores,
@@ -211,6 +247,16 @@ def listado_Cursos(request):
     if costo:
        cursos = cursos.filter(costo_mensual=costo)
   
+    paginator=Paginator(cursos,5)
+    page=request.GET.get('page')
+
+    try:
+            cursos = paginator.page(page)
+    except PageNotAnInteger:
+            cursos = paginator.page(1)
+    except EmptyPage:
+            cursos = paginator.page(paginator.num_pages)
+
     context = {
         'cursos': cursos,
         'errores': errores,
@@ -233,7 +279,19 @@ def listado_Sedes(request):
         
     if ciudad:
         sedes=sedes.filter(ciudad__icontains=ciudad)
- 
+    
+    
+    paginator=Paginator(sedes,5)
+    page=request.GET.get('page')
+
+    try:
+            sedes = paginator.page(page)
+    except PageNotAnInteger:
+            sedes = paginator.page(1)
+    except EmptyPage:
+            sedes = paginator.page(paginator.num_pages)
+
+   
     return render(request,'listado_Sedes.html', { 'sedes': sedes,
 })
 

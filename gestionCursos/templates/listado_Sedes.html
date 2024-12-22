@@ -70,12 +70,11 @@
                         </tbody>
                     </table>
                 </div>
-
                 <nav aria-label="Page navigation">
                     <ul class="pagination justify-content-center">
                         {% if sedes.has_previous %}
                             <li class="page-item">
-                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ alumnos.previous_page_number }}" aria-label="Previous">
+                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ sedes.previous_page_number }}" aria-label="Previous">
                                     <span aria-hidden="true">&laquo;</span>
                                 </a>
                             </li>
@@ -86,14 +85,23 @@
                         {% endif %}
 
                         {% for num in sedes.paginator.page_range %}
-                            <li class="page-item {% if alumnos.number == num %}active{% endif %}">
-                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
-                            </li>
+                            {% if num > sedes.number|add:'-2' and num < sedes.number|add:'2' %}
+                                <li class="page-item {% if cursos.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                </li>
+                            {% elif num == 1 or num == sedes.paginator.num_pages %}
+                                <li class="page-item {% if sedes.number == num %}active{% endif %}">
+                                    <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                </li>
+                                {% if num > sedes.number|add:'-2' %}
+                                    <li class="page-item disabled"><span class="page-link">...</span></li>
+                                {% endif %}
+                            {% endif %}
                         {% endfor %}
 
                         {% if sedes.has_next %}
                             <li class="page-item">
-                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ alumnos.next_page_number }}" aria-label="Next">
+                                <a class="page-link" href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ sedes.next_page_number }}" aria-label="Next">
                                     <span aria-hidden="true">&raquo;</span>
                                 </a>
                             </li>
@@ -104,7 +112,6 @@
                         {% endif %}
                     </ul>
                 </nav>
-
             </div>
         </div>
     </div>

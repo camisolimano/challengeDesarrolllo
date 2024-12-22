@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <h3>Historial de Cursos de {{ alumno.nombre }} {{ alumno.apellido }}</h3>
+
+    {% if inscripciones %}
+        <ul class="list-group mt-4">
+            {% for inscripcion in inscripciones %}
+                <li class="list-group-item">
+                    <strong>Código:</strong> {{ inscripcion.curso.codigo_curso }} - <strong>Tema:</strong> {{ inscripcion.curso.tema }}<br>
+                    <strong>Sede:</strong> {{ inscripcion.curso.sede.nombre }}<br>
+                    <strong>Fecha de Inicio:</strong> {{ inscripcion.curso.fecha_inicio }}<br>
+                    <strong>Fecha de Fin:</strong> {{ inscripcion.curso.fecha_fin }}<br>
+                    <strong>Nota:</strong> {{ inscripcion.nota|default:"Pendiente" }}
+                </li>
+            {% endfor %}
+        </ul>
+    {% else %}
+        <p class="text-muted mt-4">Este alumno no tiene cursos realizados.</p>
+    {% endif %}
+
+    <div class="mt-4">
+        <a href="{% url 'detalles_Alumno' %}?dni={{ alumno.dni }}" class="btn btn-secondary">Volver</a>
+    </div>
+</div>
+{% endblock %}
+
+
