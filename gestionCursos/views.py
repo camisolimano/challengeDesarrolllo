@@ -1,12 +1,13 @@
+from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
 from django.utils import timezone
 from django.contrib.auth.decorators import login_required
-from .models import Alumno, Curso, Sede
+from .models import Alumno, Curso, Sede,Inscripcion_Curso_Alumno
 from .forms import AlumnoForm,CursoForm,AltaBajaAlumnos
-from django.db.models import Q
+from django.db.models import Q,Avg
 from datetime import date, datetime
 from django.contrib import messages
 
@@ -70,14 +71,53 @@ def borrar_Alumno(request):
 def detalles_Alumno(request):
     dni=request.GET.get('dni','')
     alumno=None
+    cursos=None
     if dni:
         try:
             alumno=Alumno.objects.get(dni=dni)
+            cursos = Inscripcion_Curso_Alumno.objects.filter(alumno=alumno).select_related('curso')
         except Alumno.DoesNotExist:
             return render(request,'detalles_Alumno.html', {'error' : 'No hay ningun alumno con ese DNI'})
 
-    return render(request,'detalles_Alumno.html', {'alumno' : alumno})
+    return render(request,'detalles_Alumno.html', {'alumno' : alumno, 'cursos': cursos})
 
+def modificar_nota(request,alumno_id, codigo_curso):
+  
+        alumno = None
+        curso = None
+        inscripcion = None
+        try:
+            alumno = Alumno.objects.get(id=alumno_id)
+        except Alumno.DoesNotExist:
+            messages.error(request, "El alumno no existe.")
+            return redirect('modificar_nota.html') 
+        
+        try:
+            curso = Curso.objects.get(codigo_curso=codigo_curso)
+        except Curso.DoesNotExist:
+            messages.error(request, "El curso no existe.")
+            return redirect('modificar_nota.html')  
+        
+        try:
+            inscripcion = Inscripcion_Curso_Alumno.objects.get(alumno=alumno, curso=curso)
+        except Inscripcion_Curso_Alumno.DoesNotExist:
+            messages.error(request, "El alumno no está inscrito en este curso.")
+            return redirect('modificar_nota.html')  
+        
+        if request.method=="POST":
+            nueva_nota=request.POST.get('nota',None)
+            if nueva_nota:
+                try:
+                    inscripcion.nota = float(nueva_nota)
+                    inscripcion.save()
+                    messages.success(request, f"Nota del alumno {alumno.nombre} {alumno.apellido} modificada con éxito.")
+                    return redirect('modificar_nota.html')
+                except ValueError:
+                    messages.error(request, "La nota ingresada no es válida.")
+            else:
+                messages.error(request, "Por favor ingrese una nota válida.")
+        
+        return render(request, 'modificar_nota.html', {'alumno': alumno, 'curso': curso, 'inscripcion': inscripcion})
 
 def listado_Alumnos(request):
     errores = []
@@ -212,9 +252,13 @@ def alta_baja_cursos(request):
 
                if accion == 'alta':
                    curso.alumnos.add(alumno)
+                   Inscripcion_Curso_Alumno.objects.get_or_create(alumno=alumno, curso=curso)
+
                    messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
                elif accion == 'baja':
                     curso.alumnos.remove(alumno)
+                    Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).delete()
+
                     messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} eliminado del curso.")
             except Alumno.DoesNotExist:
                 messages.error(request, "El alumno con ese dni no existe.")
@@ -226,3 +270,36 @@ def alta_baja_cursos(request):
 
     return render(request,'alta_baja_cursos.html',{'form': form })
 
+def detalle_Curso(request):
+    curso=None
+    inscripciones=[]
+    promedio_notas=None
+    codigo_curso=request.GET.get('codigo_curso','').strip()
+    if codigo_curso:
+        try:
+            curso=Curso.objects.get(codigo_curso=codigo_curso)
+            inscripciones=Inscripcion_Curso_Alumno.objects.filter(curso=curso)
+            promedio_notas = inscripciones.aggregate(Avg('nota'))['nota__avg'] or 0
+
+        except Curso.DoesNotExist:
+            curso=None
+            alumnos=[]
+            return render(request,'detalle_Curso.html', {'error': 'No se encontro el curso'})
+    return render(request, 'detalle_Curso.html',{'curso': curso, 'inscripciones': inscripciones, 'promedio_notas':promedio_notas})
+
+
+def detalle_Sede(request):
+    sede=None
+    cursos=[]
+    nombre=request.GET.get('nombre','').strip()
+    if nombre:
+        try:
+            sede=Sede.objects.get(nombre=nombre)
+            cursos = Curso.objects.filter(sede=sede) 
+               
+        except Sede.DoesNotExist:
+            sede=None
+            cursos=[]
+            return render(request,'detalle_Sede.html', {'error': 'No se encontro la sede'})
+        
+    return render(request, 'detalle_Sede.html',{'sede': sede, 'cursos': cursos})

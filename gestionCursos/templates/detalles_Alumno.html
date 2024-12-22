@@ -24,6 +24,25 @@
             <p><strong>DNI:</strong> {{ alumno.dni }}</p>
             <p><strong>Dirección:</strong> {{ alumno.direccion }}</p>
         </div>
+
+        <div class="mt-4">
+            <h4>Cursos Inscritos:</h4>
+            {% if cursos %}
+                <ul class="list-group">
+                    {% for curso in cursos %}
+                        <li class="list-group-item">
+                            <strong>Código:</strong> {{ curso.curso.codigo_curso }} - <strong>Tema:</strong> {{ curso.curso.tema }}
+                            <div class="d-flex justify-content-between mt-2">
+                                <p><strong>Nota:</strong> {{ curso.nota|default:"Pendiente" }}</p>
+                                <a href="{% url 'modificar_nota'  alumno.id curso.curso.codigo_curso %}" class="btn btn-secondary btn-sm">Agregar/Modificar Nota</a>
+                            </div>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-muted">Este alumno no está inscrito en ningún curso.</p>
+            {% endif %}
+        </div>
     {% endif %}
 </div>
 {% endblock %}

@@ -1,3 +1,4 @@
+from datetime import date
 from django.db import models
 
 class Alumno(models.Model):
@@ -24,3 +25,15 @@ class Curso(models.Model):
     fecha_fin=models.DateField()
     sede= models.ForeignKey(Sede, on_delete=models.CASCADE)#un curso se dicta en una sede, pero en una sede hay muchos cursos
     alumnos=models.ManyToManyField(Alumno)
+
+    @property
+    def es_activo(self):
+        hoy=date.today()
+        return self.fecha_inicio<= hoy <= self.fecha_fin
+class Inscripcion_Curso_Alumno(models.Model):
+    alumno=models.ForeignKey(Alumno, on_delete=models.CASCADE)
+    curso=models.ForeignKey(Curso, on_delete=models.CASCADE)
+    nota=models.DecimalField(max_digits=4,decimal_places=2,null=True,blank=True)
+
+    def aprobo(self):
+        return self.nota is not None and self.nota>=6

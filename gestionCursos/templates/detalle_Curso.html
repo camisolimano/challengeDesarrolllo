@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <h1 class="text-dark">Detalle del Curso</h1>
+            </div>
+            <form method="get">
+                <div class="form-group">
+                    <label for="codigo_curso">Código del Curso</label>
+                    <input type="number" name="codigo_curso" id="codigo_curso" class="form-control" placeholder="Ingrese el código del curso" value="{{ request.GET.codigo_curso }}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Buscar Curso</button>
+            </form>
+            {% if error %}
+                <div class="alert alert-danger mt-4">
+                    {{ error }}
+                </div>
+            {% endif %}
+            {% if curso %}
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Datos del Curso</h3>
+                        <p><strong>Código:</strong> {{ curso.codigo_curso }}</p>
+                        <p><strong>Tema:</strong> {{ curso.tema }}</p>
+                        <p><strong>Año de Dictado:</strong> {{ curso.año_dictado }}</p>
+                        <p><strong>Duración:</strong> {{ curso.duracion }} días</p>
+                        <p><strong>Costo Mensual:</strong> ${{ curso.costo_mensual }}</p>
+                        <p><strong>Fecha de Inicio:</strong> {{ curso.fecha_inicio }}</p>
+                        <p><strong>Fecha de Fin:</strong> {{ curso.fecha_fin }}</p>
+                        <p><strong>Sede:</strong> {{ curso.sede.nombre }}</p>
+                        <p><strong>Nota Promedio:</strong> {{ promedio_notas|floatformat:2|default:"-"}}</p>
+                        <p><strong>Estado:</strong> 
+                            {% if curso.es_activo %}
+                                Activo
+                            {% else %}
+                                Finalizado
+                            {% endif %}
+                        </p>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Alumnos Inscritos</h3>
+                        {% if inscripciones %}
+                            <ul class="list-group">
+                                {% for inscripcion in inscripciones %}
+                                    <li class="list-group-item">
+                                        <strong>Apellido:</strong> {{ inscripcion.alumno.apellido }} - 
+                                        <strong>DNI:</strong> {{ inscripcion.alumno.dni }} - 
+                                        <strong>Nota:</strong> {{ inscripcion.nota }} - 
+                                        <strong>Aprobado:</strong> 
+                                        {% if inscripcion.nota >= 6 %}
+                                            Sí
+                                        {% else %}
+                                            No
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No hay alumnos inscritos en este curso.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

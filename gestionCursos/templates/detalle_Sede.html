@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4">
+                <h1 class="text-dark">Detalle de la sede</h1>
+            </div>
+            <form method="get">
+                <div class="form-group">
+                    <label for="nombre">Nombre del Curso</label>
+                    <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese el nombre de la sede" value="{{ request.GET.nombre }}">
+                </div>
+                <button type="submit" class="btn btn-primary btn-block">Buscar Sede</button>
+            </form>
+            {% if error %}
+                <div class="alert alert-danger mt-4">
+                    {{ error }}
+                </div>
+            {% endif %}
+            {% if sede %}
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Datos de la sede</h3>
+                        <p><strong>Nombre:</strong> {{ sede.nombre }}</p>
+                        <p><strong>Dirección:</strong> {{ sede.direccion }}</p>
+                        <p><strong>Ciudad:</strong> {{ sede.ciudad }}</p>
+                        <p><strong>Telefono:</strong> {{ sede.telefono }}</p>
+                        <p><strong>Cantidad de aulas:</strong> {{ sede.cant_aulas }}</p>
+                    </div>
+                </div>
+                <div class="card mt-4">
+                    <div class="card-body">
+                        <h3 class="card-title">Cursos</h3>
+                        {% if cursos %}
+                            <ul class="list-group">
+                                {% for curso in cursos %}
+                                    <li class="list-group-item">
+                                        <strong>Código Curso:</strong> {{ curso.codigo_curso }} - <strong>Tema:</strong> {{ curso.tema }} - 
+                                        <strong>Estado:</strong> 
+                                        {% if curso.es_activo %}
+                                            Activo
+                                        {% else %}
+                                            Finalizado
+                                        {% endif %}
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">No hay cursos en esta sede</p>
+                        {% endif %}
+                    </div>
+                </div>
+                
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+

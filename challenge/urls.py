@@ -34,6 +34,10 @@ urlpatterns = [
     path('detalles_Alumno/', views.detalles_Alumno, name='detalles_Alumno'),
     path('listado_Sedes/', views.listado_Sedes, name='listado_Sedes'),
     path('alta_baja_cursos/', views.alta_baja_cursos, name='alta_baja_cursos'),
+    path('detalle_Curso/', views.detalle_Curso, name='detalle_Curso'),
+    path('detalle_Sede/', views.detalle_Sede, name='detalle_Sede'),
+    path('modificar_nota/<int:alumno_id>/<int:codigo_curso>/', views.modificar_nota, name='modificar_nota'),
+
 
 
 ]
