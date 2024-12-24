@@ -5,7 +5,7 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center mb-4">
-                <h1 class="text-dark">Detalle del Curso</h1>
+                <h1 style="color: #ff4c29;">Detalle del Curso</h1>
             </div>
             <form method="get">
                 <div class="form-group">
@@ -60,8 +60,45 @@
                                     </li>
                                 {% endfor %}
                             </ul>
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if inscripciones.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?codigo_curso={{ request.GET.codigo_curso }}&page={{ inscripciones.previous_page_number }}" aria-label="Anterior">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&laquo;</span>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in inscripciones.paginator.page_range %}
+                                        {% if num == inscripciones.number %}
+                                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?codigo_curso={{ request.GET.codigo_curso }}&page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if inscripciones.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?codigo_curso={{ request.GET.codigo_curso }}&page={{ inscripciones.next_page_number }}" aria-label="Siguiente">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&raquo;</span>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
                         {% else %}
-                            <p class="text-muted">No hay alumnos inscritos en este curso.</p>
+                            <p class="text-muted">No hay alumnos inscriptos en este curso.</p>
                         {% endif %}
                     </div>
                 </div>

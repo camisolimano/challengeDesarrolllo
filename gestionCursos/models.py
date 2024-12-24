@@ -1,11 +1,12 @@
 from datetime import date
 from django.db import models
+from django.core.validators import MinLengthValidator
 
 class Alumno(models.Model):
     nombre=models.CharField( max_length=50)
     apellido=models.CharField( max_length=50)
     fecha_nac=models.DateField()
-    dni=models.CharField(max_length=20, unique=True)
+    dni=models.CharField(max_length=8, unique=True,validators=[MinLengthValidator(8)])
     direccion=models.CharField(max_length=30)
 
 class Sede(models.Model):
@@ -23,7 +24,7 @@ class Curso(models.Model):
     costo_mensual=models.DecimalField(max_digits=20, decimal_places=3)
     fecha_inicio=models.DateField()
     fecha_fin=models.DateField()
-    sede= models.ForeignKey(Sede, on_delete=models.CASCADE)#un curso se dicta en una sede, pero en una sede hay muchos cursos
+    sede= models.ForeignKey(Sede, on_delete=models.CASCADE)
     alumnos=models.ManyToManyField(Alumno)
 
     @property

@@ -1,3 +1,4 @@
+from django.db import IntegrityError
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
@@ -17,51 +18,54 @@ from django.contrib import messages
 def home(request):
     return render(request, 'home.html')
 
+@login_required
 def pagina_principal(request):
     return render(request, 'pagina_principal.html')
-
-def signup(request):
-    if request.method=="GET":
-        return render(request, 'signup.html',{
-            'form': UserCreationForm
-        })
-    else:
-        try:
-            user=User.objects.create_user(username=request.POST['username'], password=request.POST['password'])
-            login(request,user)
-            return redirect ('home/')
-        except:
-            return render(request,'signup.html',{
-                'form': UserCreationForm,
-                'error': 'El usuario ya existe'
-            })
         
 def signin(request):
+     if request.user.is_authenticated:
+        return redirect('pagina_principal') 
      if request.method == 'GET':
-        return render(request, 'signin.html', {"form": AuthenticationForm})
+        return render(request, 'signin.html', {"form": AuthenticationForm()})
      else:
         user = authenticate(
             request, username=request.POST['username'], password=request.POST['password'])
         if user is None:
-            return render(request, 'signin.html', {"form": AuthenticationForm, "error": "Usuario o contraseña incorrecta."})
+            return render(request, 'signin.html', {"form": AuthenticationForm(), "error": "Usuario o contraseña incorrecta."})
         login(request, user)
         return redirect('pagina_principal')
 
+   
+@login_required
+def logout_view(request):
+    logout(request)
+    return redirect('signin')
+
+@login_required
 def crear_Alumno(request):
+    dni_inicial = request.GET.get('dni', '')
     if request.method == 'GET':
-        return render(request, 'crear_Alumno.html', {"form": AlumnoForm })
+        form = AlumnoForm(initial={'dni': dni_inicial})
+        return render(request, 'crear_Alumno.html', {"form": form, "dni_inicial": dni_inicial})
     else:
         alumno=AlumnoForm(request.POST)
         if alumno.is_valid():
-            alumno.save()
-            messages.success(request, "El alumno se creó exitosamente.")
-            return redirect('crear_Alumno')
+            dni = alumno.cleaned_data.get('dni')
+            if Alumno.objects.filter(dni=dni).exists():
+                messages.error(request, "El alumno con ese DNI ya ha sido creado.")
+            else:
+                alumno.save()
+                messages.success(request, "El alumno se creó exitosamente.")
+                return redirect('crear_Alumno')
         else:
-            messages.error(request, "Hubo un error al crear el alumno.")
-            return render(request, 'crear_Alumno.html', {"form": alumno})
+            if 'dni' in alumno.errors:
+                messages.error(request, "El alumno con ese DNI ya ha sido creado.")
+            else:
+                messages.error(request, "Hubo un error al crear el alumno.")
+    return render(request, 'crear_Alumno.html', {"form": alumno, "dni_inicial": dni_inicial})
 
 
-
+@login_required
 def borrar_Alumno(request):
     if request.method=="POST":
         dni_al=request.POST.get('dni')
@@ -77,6 +81,7 @@ def borrar_Alumno(request):
             return render(request, 'borrar_alumno.html', {'error': 'No se encontró un alumno con ese DNI.'})
     return render(request, 'borrar_alumno.html')
 
+@login_required
 def detalles_Alumno(request):
     dni=request.GET.get('dni','')
     alumno=None
@@ -93,6 +98,7 @@ def detalles_Alumno(request):
 
     return render(request,'detalles_Alumno.html', {'alumno' : alumno, 'cursos': cursos})
 
+@login_required
 def modificar_nota(request,alumno_id, codigo_curso):
   
         alumno = None
@@ -102,19 +108,19 @@ def modificar_nota(request,alumno_id, codigo_curso):
             alumno = Alumno.objects.get(id=alumno_id)
         except Alumno.DoesNotExist:
             messages.error(request, "El alumno no existe.")
-            return redirect('modificar_nota.html') 
+            return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso) 
         
         try:
             curso = Curso.objects.get(codigo_curso=codigo_curso)
         except Curso.DoesNotExist:
             messages.error(request, "El curso no existe.")
-            return redirect('modificar_nota.html')  
+            return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)  
         
         try:
             inscripcion = Inscripcion_Curso_Alumno.objects.get(alumno=alumno, curso=curso)
         except Inscripcion_Curso_Alumno.DoesNotExist:
             messages.error(request, "El alumno no está inscrito en este curso.")
-            return redirect('modificar_nota.html')  
+            return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)  
         
         if request.method=="POST":
             nueva_nota=request.POST.get('nota',None)
@@ -123,7 +129,7 @@ def modificar_nota(request,alumno_id, codigo_curso):
                     inscripcion.nota = float(nueva_nota)
                     inscripcion.save()
                     messages.success(request, f"Nota del alumno {alumno.nombre} {alumno.apellido} modificada con éxito.")
-                    return redirect('modificar_nota.html')
+                    return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)
                 except ValueError:
                     messages.error(request, "La nota ingresada no es válida.")
             else:
@@ -131,7 +137,7 @@ def modificar_nota(request,alumno_id, codigo_curso):
         
         return render(request, 'modificar_nota.html', {'alumno': alumno, 'curso': curso, 'inscripcion': inscripcion})
 
-
+@login_required
 def historial_Alumno(request,dni):
     try:
         alumno=Alumno.objects.get(dni=dni)
@@ -142,8 +148,7 @@ def historial_Alumno(request,dni):
     return render(request, 'historial_Alumno.html',{'alumno': alumno, 'inscripciones': inscripciones})
 
 
-
-
+@login_required
 def listado_Alumnos(request):
     errores = []
     nombre_al=request.GET.get('nombre','')
@@ -193,17 +198,26 @@ def listado_Alumnos(request):
     }
     return render(request,'listado_Alumnos.html', context)
 
+@login_required
 def crear_Curso(request):
     if request.method == 'GET':
-        return render(request, 'crear_Curso.html', {"form": CursoForm })
+        form = CursoForm()
+        return render(request, 'crear_Curso.html', {"form": form })
     else:
         form=CursoForm(request.POST)
         if form.is_valid():
+            codigo_curso=form.cleaned_data.get('codigo_curso')
             curso=form.save(commit=False)
             curso.save()
             form.save_m2m()
-    return redirect('crear_Curso/')
+            messages.success(request, "El curso se creó exitosamente.")
+            return redirect('crear_Curso')
+        else:
+            messages.error(request, "Hubo un error al crear el curso.")
+    return render(request, 'crear_Curso.html', {"form": form})
 
+
+@login_required
 def borrar_Curso(request):
     if request.method=="POST":
         codigo_str = request.POST.get('codigo_curso')
@@ -218,6 +232,7 @@ def borrar_Curso(request):
             return render(request, 'borrar_Curso.html', {'error': 'No se encontró el curso con ese codigo.'})
     return render(request, 'borrar_Curso.html')
 
+@login_required
 def listado_Cursos(request):
     errores = []
     duracion=request.GET.get('duracion','')
@@ -264,8 +279,7 @@ def listado_Cursos(request):
     return render(request,'listado_Cursos.html', context)
 
 
-
-
+@login_required
 def listado_Sedes(request):
     errores = []
     ciudad=request.GET.get('ciudad','').strip()
@@ -295,7 +309,7 @@ def listado_Sedes(request):
     return render(request,'listado_Sedes.html', { 'sedes': sedes,
 })
 
-
+@login_required
 def alta_baja_cursos(request):
     if request.method=="POST":
        form=AltaBajaAlumnos(request.POST)
@@ -309,15 +323,23 @@ def alta_baja_cursos(request):
                curso=Curso.objects.get(codigo_curso=cod_curso)
 
                if accion == 'alta':
-                   curso.alumnos.add(alumno)
-                   Inscripcion_Curso_Alumno.objects.get_or_create(alumno=alumno, curso=curso)
+                    if curso.fecha_fin < date.today():
+                        messages.error(request, f"El curso {curso.tema} ya ha finalizado y no se puede dar de alta a nuevos alumnos.")
+                        return redirect('alta_baja_cursos')
 
-                   messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
+                    if Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).exists():
+                        messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} ya está inscrito en este curso.")
+                    else:
+                        curso.alumnos.add(alumno)
+                        Inscripcion_Curso_Alumno.objects.get_or_create(alumno=alumno, curso=curso)
+                        messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
                elif accion == 'baja':
-                    curso.alumnos.remove(alumno)
-                    Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).delete()
-
-                    messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} eliminado del curso.")
+                    if not Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).exists():
+                        messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} no se puede dar de baja porque no esta inscrito en este curso.")
+                    else:
+                        curso.alumnos.remove(alumno)
+                        Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).delete()
+                        messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} eliminado del curso.")
             except Alumno.DoesNotExist:
                 messages.error(request, "El alumno con ese dni no existe.")
             except Curso.DoesNotExist:
@@ -328,6 +350,7 @@ def alta_baja_cursos(request):
 
     return render(request,'alta_baja_cursos.html',{'form': form })
 
+@login_required
 def detalle_Curso(request):
     curso=None
     inscripciones=[]
@@ -338,6 +361,17 @@ def detalle_Curso(request):
             curso=Curso.objects.get(codigo_curso=codigo_curso)
             inscripciones=Inscripcion_Curso_Alumno.objects.filter(curso=curso)
             promedio_notas = inscripciones.aggregate(Avg('nota'))['nota__avg'] or 0
+ 
+            paginator=Paginator(inscripciones,5)
+            page=request.GET.get('page')
+
+            try:
+                    inscripciones = paginator.page(page)
+            except PageNotAnInteger:
+                    inscripciones = paginator.page(1)
+            except EmptyPage:
+                    inscripciones = paginator.page(paginator.num_pages)
+
 
         except Curso.DoesNotExist:
             curso=None
@@ -345,19 +379,21 @@ def detalle_Curso(request):
             return render(request,'detalle_Curso.html', {'error': 'No se encontro el curso'})
     return render(request, 'detalle_Curso.html',{'curso': curso, 'inscripciones': inscripciones, 'promedio_notas':promedio_notas})
 
-
+@login_required
 def detalle_Sede(request):
     sede=None
     cursos=[]
     nombre=request.GET.get('nombre','').strip()
+    error=None
     if nombre:
         try:
             sede=Sede.objects.get(nombre=nombre)
             cursos = Curso.objects.filter(sede=sede) 
-               
+            paginator=Paginator(cursos,5)
+            page_number=request.GET.get('page')
+            cursos=paginator.get_page(page_number)
         except Sede.DoesNotExist:
             sede=None
             cursos=[]
-            return render(request,'detalle_Sede.html', {'error': 'No se encontro la sede'})
-        
-    return render(request, 'detalle_Sede.html',{'sede': sede, 'cursos': cursos})
+            error='No se encontro la sede'
+    return render(request, 'detalle_Sede.html',{'sede': sede, 'cursos': cursos, 'error':error})

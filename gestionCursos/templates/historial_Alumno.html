@@ -2,7 +2,7 @@
 
 {% block content %}
 <div class="container">
-    <h3>Historial de Cursos de {{ alumno.nombre }} {{ alumno.apellido }}</h3>
+    <h3  style="color: #ff4c29;">Historial y Próximos Cursos de {{ alumno.nombre }} {{ alumno.apellido }}</h3>
 
     {% if inscripciones %}
         <ul class="list-group mt-4">
@@ -21,7 +21,7 @@
     {% endif %}
 
     <div class="mt-4">
-        <a href="{% url 'detalles_Alumno' %}?dni={{ alumno.dni }}" class="btn btn-secondary">Volver</a>
+        <a href="{% url 'detalles_Alumno' %}?dni={{ alumno.dni }}"  class="btn btn-primary " style="color: #ffff;">Volver</a>
     </div>
 </div>
 {% endblock %}

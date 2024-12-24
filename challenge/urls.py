@@ -23,7 +23,6 @@ from gestionCursos import views
 urlpatterns = [
     path('', RedirectView.as_view(url='/signin/')),
     path('admin/', admin.site.urls),
-    path('signup/', views.signup, name='signup'),
     path('signin/', views.signin, name='signin'),
     path('pagina_principal/', views.pagina_principal, name='pagina_principal'),
     path('crear_Alumno/', views.crear_Alumno, name='crear_Alumno'),
@@ -39,7 +38,6 @@ urlpatterns = [
     path('detalle_Sede/', views.detalle_Sede, name='detalle_Sede'),
     path('modificar_nota/<int:alumno_id>/<int:codigo_curso>/', views.modificar_nota, name='modificar_nota'),
     path('historial_Alumno/<int:dni>/', views.historial_Alumno, name='historial_Alumno'),
-
-
+    path('logout/', views.logout_view, name='logout'),
 
 ]

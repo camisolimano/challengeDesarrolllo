@@ -16,6 +16,7 @@
                 background-color: #f4f4f4;
                 font-family: 'Poppins', sans-serif;
 
+
             }
             .btn-primary {
                 background-color: #ff4c29;
@@ -58,7 +59,8 @@
                       <a class="dropdown-item" href="{% url 'crear_Curso' %}">Crear Curso</a>
                       <a class="dropdown-item" href="{% url 'borrar_Curso' %}">Eliminar Curso</a>
                       <a class="dropdown-item" href="{% url 'listado_Cursos' %}">Listado de Cursos</a>
-                      <a class="dropdown-item" href="{% url 'detalle_Curso' %}">Listado de Cursos</a>
+                      <a class="dropdown-item" href="{% url 'detalle_Curso' %}">Buscar Curso</a>
+
 
                   </div>
               </li>
@@ -69,18 +71,19 @@
                   <div class="dropdown-menu" aria-labelledby="sedesDropdown">
                       <a class="dropdown-item" href="{% url 'listado_Sedes' %}">Listado de Sedes</a>
                       <a class="dropdown-item" href="{% url 'detalle_Sede' %}">Buscar Sede</a>
-
                   </div>
               </li>
-          </ul>
+              </ul>
       </div>
   </nav>
   {% endblock %}
   <div class="container">
 
-  {% block content %}
-  {% endblock %}
+
+    {% block content %}
+    {% endblock %}
   </div>
+
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

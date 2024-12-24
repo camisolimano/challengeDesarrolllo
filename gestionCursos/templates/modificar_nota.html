@@ -25,6 +25,9 @@
             {% endfor %}
         </div>
     {% endif %}
+    <div class="mt-4">
+        <a href="{% url 'detalles_Alumno' %}?dni={{ alumno.dni }}" class="btn btn-primary " style="color: #ffff;">Volver</a>
+    </div>
 </div>
 {% endblock %}
 

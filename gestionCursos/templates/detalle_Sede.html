@@ -5,11 +5,11 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="text-center mb-4">
-                <h1 class="text-dark">Detalle de la sede</h1>
+                <h1 style="color: #ff4c29;">Detalle de la sede</h1>
             </div>
             <form method="get">
                 <div class="form-group">
-                    <label for="nombre">Nombre del Curso</label>
+                    <label for="nombre">Nombre de la Sede</label>
                     <input type="text" name="nombre" id="nombre" class="form-control" placeholder="Ingrese el nombre de la sede" value="{{ request.GET.nombre }}">
                 </div>
                 <button type="submit" class="btn btn-primary btn-block">Buscar Sede</button>
@@ -47,6 +47,44 @@
                                     </li>
                                 {% endfor %}
                             </ul>
+
+                            <nav aria-label="Page navigation" class="mt-4">
+                                <ul class="pagination justify-content-center">
+                                    {% if cursos.has_previous %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?nombre={{ request.GET.nombre }}&page={{ cursos.previous_page_number }}" aria-label="Anterior">
+                                                <span aria-hidden="true">&laquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&laquo;</span>
+                                        </li>
+                                    {% endif %}
+
+                                    {% for num in cursos.paginator.page_range %}
+                                        {% if num == cursos.number %}
+                                            <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                                        {% else %}
+                                            <li class="page-item">
+                                                <a class="page-link" href="?nombre={{ request.GET.nombre }}&page={{ num }}">{{ num }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+
+                                    {% if cursos.has_next %}
+                                        <li class="page-item">
+                                            <a class="page-link" href="?nombre={{ request.GET.nombre }}&page={{ cursos.next_page_number }}" aria-label="Siguiente">
+                                                <span aria-hidden="true">&raquo;</span>
+                                            </a>
+                                        </li>
+                                    {% else %}
+                                        <li class="page-item disabled">
+                                            <span class="page-link">&raquo;</span>
+                                        </li>
+                                    {% endif %}
+                                </ul>
+                            </nav>
                         {% else %}
                             <p class="text-muted">No hay cursos en esta sede</p>
                         {% endif %}

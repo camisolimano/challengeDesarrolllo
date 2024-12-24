@@ -1,4 +1,5 @@
 {% extends 'base.html' %}
+{% load static %}
 {% block content %}
 <div class="container">
     <div class="row justify-content-center">
@@ -31,7 +32,11 @@
 
                     <div class="form-group">
                         <label for="id_dni">DNI</label>
-                        <input type="text" name="dni" id="id_dni" class="form-control" placeholder="Ingresa el DNI" required>
+                        <input type="text" name="dni" id="id_dni" class="form-control" placeholder="Ingresa el DNI"     value="{{ dni_inicial }}" required>
+                        <button type="button" id="searchDNIButton" class="btn btn-outline-secondary">Buscar DNI</button>
+                        <div id="errorMessage" class="text-danger mt-2" style="display: none;">
+                        Por favor, ingresa un DNI válido.
+                        </div>
                     </div>
 
                     <div class="form-group">
@@ -46,5 +51,6 @@
         </div>
     </div>
 </div>
-
+<script src="{% static 'validacionDni.js' %}"></script>
 {% endblock %}
+

@@ -35,7 +35,7 @@
 
                             <div class="d-flex justify-content-between mt-2">
                                 <p><strong>Nota:</strong> {{ curso.nota|default:"Pendiente" }}</p>
-                                <a href="{% url 'modificar_nota'  alumno.id curso.curso.codigo_curso %}" class="btn btn-secondary btn-sm">Agregar/Modificar Nota</a>
+                                <a href="{% url 'modificar_nota'  alumno.id curso.curso.codigo_curso %}" class="btn btn-primary " style="color: #ffff;">Agregar/Modificar Nota</a>
                             </div>
                         </li>
                     {% endfor %}
@@ -45,7 +45,7 @@
             {% endif %}
         </div>
         <div class="mt-4">
-            <a href="{% url 'historial_Alumno' alumno.dni %}" class="btn btn-info">Historial de Cursos</a>
+            <a href="{% url 'historial_Alumno' alumno.dni %}" class="btn btn-primary " style="color: #ffff;">Historial y próximos Cursos</a>
         </div>
     {% endif %}
 </div>
