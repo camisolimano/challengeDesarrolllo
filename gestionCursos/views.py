@@ -43,10 +43,8 @@ def logout_view(request):
 
 @login_required
 def crear_Alumno(request):
-    dni_inicial = request.GET.get('dni', '')
     if request.method == 'GET':
-        form = AlumnoForm(initial={'dni': dni_inicial})
-        return render(request, 'crear_Alumno.html', {"form": form, "dni_inicial": dni_inicial})
+        return render(request, 'crear_Alumno.html')
     else:
         alumno=AlumnoForm(request.POST)
         if alumno.is_valid():
@@ -62,7 +60,7 @@ def crear_Alumno(request):
                 messages.error(request, "El alumno con ese DNI ya ha sido creado.")
             else:
                 messages.error(request, "Hubo un error al crear el alumno.")
-    return render(request, 'crear_Alumno.html', {"form": alumno, "dni_inicial": dni_inicial})
+    return render(request, 'crear_Alumno.html', {"form": alumno})
 
 
 @login_required
@@ -71,7 +69,6 @@ def borrar_Alumno(request):
         dni_al=request.POST.get('dni')
         try:
             alumno = Alumno.objects.get(dni=dni_al)  
-            print("Alumno encontrado:", alumno)
             if 'eliminar' in request.POST: 
                 alumno.delete()
                 return render(request, 'borrar_alumno.html', {'mensaje': 'Alumno borrado exitosamente'})
@@ -206,7 +203,6 @@ def crear_Curso(request):
     else:
         form=CursoForm(request.POST)
         if form.is_valid():
-            codigo_curso=form.cleaned_data.get('codigo_curso')
             curso=form.save(commit=False)
             curso.save()
             form.save_m2m()
@@ -323,10 +319,6 @@ def alta_baja_cursos(request):
                curso=Curso.objects.get(codigo_curso=cod_curso)
 
                if accion == 'alta':
-                    if curso.fecha_fin < date.today():
-                        messages.error(request, f"El curso {curso.tema} ya ha finalizado y no se puede dar de alta a nuevos alumnos.")
-                        return redirect('alta_baja_cursos')
-
                     if Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).exists():
                         messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} ya está inscrito en este curso.")
                     else:
@@ -335,7 +327,7 @@ def alta_baja_cursos(request):
                         messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
                elif accion == 'baja':
                     if not Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).exists():
-                        messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} no se puede dar de baja porque no esta inscrito en este curso.")
+                        messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} no se puede dar de baja porque no esta inscrispto en este curso.")
                     else:
                         curso.alumnos.remove(alumno)
                         Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).delete()

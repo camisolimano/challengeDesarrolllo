@@ -2,52 +2,57 @@
 
 {% block content %}
 <div class="container">
-    <h3  style="color: #ff4c29;">Buscar Alumno por DNI</h3>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="text-center mb-4 mt-4">
+                <h1  style="color: #ff4c29;">Buscar Alumno por DNI</h1>
+            </div>
+            <form method="get" action="{% url 'detalles_Alumno' %}">
+                    <div class="form-group">
+                        <label for="dni"  style="color: #ff4c29;">DNI</label>
+                        <input type="text" name="dni" id="dni" class="form-control" placeholder="Ingrese el DNI del alumno" value="{{ request.GET.dni }}">
+                    </div>
+                    <button type="submit" class="btn btn-primary " style="color: #ffff;">Buscar</button>
+                </form>
 
-    <form method="get" action="{% url 'detalles_Alumno' %}">
-        <div class="form-group">
-            <label for="dni"  style="color: #ff4c29;">DNI</label>
-            <input type="text" name="dni" id="dni" class="form-control" placeholder="Ingrese el DNI del alumno" value="{{ request.GET.dni }}">
-        </div>
-        <button type="submit" class="btn btn-primary " style="color: #ffff;">Buscar</button>
-    </form>
+                {% if error %}
+                    <div class="alert alert-danger mt-4">
+                        <p>{{ error }}</p>
+                    </div>
+                {% elif alumno %}
+                    <div class="mt-4">
+                        <h4>Detalles del Alumno:</h4>
+                        <p><strong>Nombre y Apellido:</strong> {{ alumno.nombre }} {{ alumno.apellido }}</p>
+                        <p><strong>Fecha de Nacimiento:</strong> {{ alumno.fecha_nac }}</p>
+                        <p><strong>DNI:</strong> {{ alumno.dni }}</p>
+                        <p><strong>Dirección:</strong> {{ alumno.direccion }}</p>
+                    </div>
 
-    {% if error %}
-        <div class="alert alert-danger mt-4">
-            <p>{{ error }}</p>
-        </div>
-    {% elif alumno %}
-        <div class="mt-4">
-            <h4>Detalles del Alumno:</h4>
-            <p><strong>Nombre y Apellido:</strong> {{ alumno.nombre }} {{ alumno.apellido }}</p>
-            <p><strong>Fecha de Nacimiento:</strong> {{ alumno.fecha_nac }}</p>
-            <p><strong>DNI:</strong> {{ alumno.dni }}</p>
-            <p><strong>Dirección:</strong> {{ alumno.direccion }}</p>
-        </div>
+                    <div class="mt-4">
+                        <h4>Cursos Inscriptos Activos:</h4>
+                        {% if cursos %}
+                            <ul class="list-group">
+                                {% for curso in cursos %}
+                                    <li class="list-group-item">
+                                        <strong>Código:</strong> {{ curso.curso.codigo_curso }} - <strong>Tema:</strong> {{ curso.curso.tema }}- <strong>Sede:</strong> {{ curso.curso.sede.nombre }}-  <strong>Fecha de Inicio:</strong> {{ curso.curso.fecha_inicio }}
 
-        <div class="mt-4">
-            <h4>Cursos Inscriptos Activos:</h4>
-            {% if cursos %}
-                <ul class="list-group">
-                    {% for curso in cursos %}
-                        <li class="list-group-item">
-                            <strong>Código:</strong> {{ curso.curso.codigo_curso }} - <strong>Tema:</strong> {{ curso.curso.tema }}- <strong>Sede:</strong> {{ curso.curso.sede.nombre }}-  <strong>Fecha de Inicio:</strong> {{ curso.curso.fecha_inicio }}
-
-                            <div class="d-flex justify-content-between mt-2">
-                                <p><strong>Nota:</strong> {{ curso.nota|default:"Pendiente" }}</p>
-                                <a href="{% url 'modificar_nota'  alumno.id curso.curso.codigo_curso %}" class="btn btn-primary " style="color: #ffff;">Agregar/Modificar Nota</a>
-                            </div>
-                        </li>
-                    {% endfor %}
-                </ul>
-            {% else %}
-                <p class="text-muted">Este alumno no está inscrito en ningún curso.</p>
-            {% endif %}
+                                        <div class="d-flex justify-content-between mt-2">
+                                            <p><strong>Nota:</strong> {{ curso.nota|default:"Pendiente" }}</p>
+                                            <a href="{% url 'modificar_nota'  alumno.id curso.curso.codigo_curso %}" class="btn btn-primary " style="color: #ffff;">Agregar/Modificar Nota</a>
+                                        </div>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% else %}
+                            <p class="text-muted">Este alumno no está inscrito en ningún curso.</p>
+                        {% endif %}
+                    </div>
+                    <div class="mt-4 mb-4">
+                        <a href="{% url 'historial_Alumno' alumno.dni %}" class="btn btn-primary " style="color: #ffff;">Historial y próximos Cursos</a>
+                    </div>
+                {% endif %}
         </div>
-        <div class="mt-4">
-            <a href="{% url 'historial_Alumno' alumno.dni %}" class="btn btn-primary " style="color: #ffff;">Historial y próximos Cursos</a>
-        </div>
-    {% endif %}
+    </div>
 </div>
 {% endblock %}
 

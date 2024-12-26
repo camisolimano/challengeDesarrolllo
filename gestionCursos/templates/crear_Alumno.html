@@ -4,7 +4,7 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
-            <div class="card p-4">
+            <div class="card p-4 mt-4">
                 <h3 class="text-center mb-4" style="color: #ff4c29;"> Crear Alumno</h3>
                 {% if messages %}
                 <div class="alert alert-info">
@@ -32,7 +32,7 @@
 
                     <div class="form-group">
                         <label for="id_dni">DNI</label>
-                        <input type="text" name="dni" id="id_dni" class="form-control" placeholder="Ingresa el DNI"     value="{{ dni_inicial }}" required>
+                        <input type="text" name="dni" id="id_dni" class="form-control" placeholder="Ingresa el DNI" required>
                         <button type="button" id="searchDNIButton" class="btn btn-outline-secondary">Buscar DNI</button>
                         <div id="errorMessage" class="text-danger mt-2" style="display: none;">
                         Por favor, ingresa un DNI válido.
