@@ -1,5 +1,5 @@
 # Gestor de cursos
-Este es un sistema de administración de cursos desarrollado para DBlandIT. El proyecto está implementado con Django como backend y Bootstrap como framework de diseño frontend. El objetivo es gestionar cursos, alumnos, sedes y permitir operaciones administrativas como la creación, eliminación y visualización de los datos.
+Este es un sistema de administración de cursos. El proyecto está implementado con Django como backend y Bootstrap como framework de diseño frontend. El objetivo es gestionar cursos, alumnos, sedes y permitir operaciones administrativas como la creación, eliminación y visualización de los datos.
 
 
 El sistema tiene las siguientes funcionalidades:
