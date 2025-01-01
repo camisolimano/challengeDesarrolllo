@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     'gestionCursos',
 ]
 
-LOGIN_URL = '/singin/'
+LOGIN_URL = '/signin/'
 LOGOUT_URL = '/logout/'
 
 MIDDLEWARE = [
