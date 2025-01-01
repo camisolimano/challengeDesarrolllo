@@ -7,6 +7,14 @@ class AlumnoForm(ModelForm):
     class Meta:
         model = Alumno
         fields = ['nombre', 'apellido', 'fecha_nac','dni','direccion']
+    def clean_dni(self):
+        dni = self.cleaned_data.get('dni')
+        if not dni.isdigit() or len(dni) != 8:
+            raise forms.ValidationError("El DNI debe tener exactamente 8 dígitos.")
+        if Alumno.objects.filter(dni=dni).exists():
+            raise forms.ValidationError("Ya existe un alumno con este DNI.")
+    
+        return dni
 
 
 class CursoForm(ModelForm):

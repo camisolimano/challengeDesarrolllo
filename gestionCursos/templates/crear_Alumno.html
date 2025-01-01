@@ -7,11 +7,23 @@
             <div class="card p-4 mt-4">
                 <h3 class="text-center mb-4" style="color: #ff4c29;"> Crear Alumno</h3>
                 {% if messages %}
-                <div class="alert alert-info">
-                    {% for message in messages %}
-                        <p>{{ message }}</p>
-                    {% endfor %}
-                </div>
+                    <div class="alert">
+                        {% for message in messages %}
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success mt-2">
+                                    {{ message }}
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info mt-2">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    </div>
                 {% endif %}
                 <form method="post">
                     {% csrf_token %}

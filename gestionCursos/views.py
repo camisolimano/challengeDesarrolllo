@@ -48,21 +48,16 @@ def crear_Alumno(request):
     else:
         alumno=AlumnoForm(request.POST)
         if alumno.is_valid():
-            dni = alumno.cleaned_data.get('dni')
-            if Alumno.objects.filter(dni=dni).exists():
-                messages.error(request, "El alumno con ese DNI ya ha sido creado.")
-            else:
-                alumno.save()
-                messages.success(request, "El alumno se creó exitosamente.")
-                return redirect('crear_Alumno')
+            alumno.save()
+            messages.success(request, "El alumno se creó exitosamente.")
+            return redirect('crear_Alumno')
         else:
-            if 'dni' in alumno.errors:
-                messages.error(request, "El alumno con ese DNI ya ha sido creado.")
-            else:
-                messages.error(request, "Hubo un error al crear el alumno.")
+            for field, errors in alumno.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")     
     return render(request, 'crear_Alumno.html', {"form": alumno})
 
-
+ 
 @login_required
 def borrar_Alumno(request):
     if request.method=="POST":
