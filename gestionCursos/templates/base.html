@@ -10,11 +10,19 @@
         <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body{
+                height: 100%;
                 margin: 0;
                 padding: 0;
                 height: 100vh;
                 background-color: #f4f4f4;
                 font-family: 'Poppins', sans-serif;
+            }
+            body {
+                display: flex;
+                flex-direction: column; 
+            }
+            .container {
+                flex: 1; 
             }
             .btn-primary {
                 background-color: #ff4c29;
@@ -23,9 +31,17 @@
             .navbar { background-color: #ff4c29; }
             .navbar-brand, .navbar-nav .nav-link{ color: #fff !important;
             }.card {
-      background-color: #fff;
-      border-radius: 10px;
-    }
+            background-color: #fff;
+            border-radius: 10px;
+            }
+            footer {
+                background-color: #4d4d4d; 
+                text-align: center;
+                padding: 10px 0;
+                color: #f1ebeb;
+                margin-top: auto; 
+            }
+
   </style>
 </head>
 <body>
@@ -82,6 +98,9 @@
     {% endblock %}
   </div>
 
+  <footer>
+    <p>&copy; 2025 DBlandIT. Todos los derechos reservados.</p>
+</footer>
 
   <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>

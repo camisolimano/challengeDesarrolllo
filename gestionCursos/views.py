@@ -151,10 +151,9 @@ def listado_Alumnos(request):
     alumnos=Alumno.objects.all()
 
     if nombre_al:
-        alumnos=alumnos.filter(Q(nombre=nombre_al))
-        
+        alumnos = alumnos.filter(Q(nombre__icontains=nombre_al))        
     if apellido_al:
-        alumnos=alumnos.filter(Q(apellido=apellido_al))
+        alumnos=alumnos.filter(Q(apellido__icontains=apellido_al))
 
     if fecha_nac_al:
         try:
@@ -336,7 +335,7 @@ def alta_baja_cursos(request):
             return redirect('alta_baja_cursos')
     else:
         form = AltaBajaAlumnos() 
-        
+
     return render(request,'alta_baja_cursos.html',{'form': form })
 
 @login_required

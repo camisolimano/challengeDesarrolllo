@@ -12,7 +12,19 @@
                     <strong>Sede:</strong> {{ inscripcion.curso.sede.nombre }}<br>
                     <strong>Fecha de Inicio:</strong> {{ inscripcion.curso.fecha_inicio }}<br>
                     <strong>Fecha de Fin:</strong> {{ inscripcion.curso.fecha_fin }}<br>
+                    <p><strong>Estado:</strong>
+                        {% if inscripcion.curso.es_activo %}
+                            Activo
+                        {% elif inscripcion.curso.no_ha_empezado %}
+                            Aún no comenzó
+                        {% else %}
+                            Finalizado
+                        {% endif %}
+                    </p>
                     <strong>Nota:</strong> {{ inscripcion.nota|default:"Pendiente" }}
+                    <div class="d-flex justify-content-between mt-2">
+                        <a href="{% url 'modificar_nota' alumno.id inscripcion.curso.codigo_curso %}" class="btn btn-primary" style="color: #ffff;">Agregar/Modificar Nota</a>
+                    </div>
                 </li>
             {% endfor %}
         </ul>
