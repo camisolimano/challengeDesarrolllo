@@ -75,7 +75,7 @@
                         <label for="id_alumnos">Alumnos</label>
                         <select name="alumnos" id="id_alumnos" class="form-control" multiple>
                             {% for alumno in form.fields.alumnos.queryset %}
-                                <option value="{{ alumno.pk }}">{{ alumno.apellido }} - {{ alumno.dni }}</option>
+                                <option value="{{ alumno.pk }}">{{ alumno.apellido }} {{ alumno.nombre }} - {{ alumno.dni }}</option>
                             {% endfor %}
                         </select>
                         <small class="form-text text-muted">Mantén presionada la tecla 'Ctrl' (o 'Cmd' en Mac) para seleccionar varios alumnos.</small>

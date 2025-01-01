@@ -8,13 +8,25 @@
                 <h3 class="text-center mb-6"  style="color: #ff4c29;">Gestionar Alumnos en Curso</h3>
 
                 {% if messages %}
-                    <div class="alert alert-info">
+                    <div class="alert">
                         {% for message in messages %}
-                            <p>{{ message }}</p>
+                            {% if message.tags == 'success' %}
+                                <div class="alert alert-success mt-2">
+                                    {{ message }}
+                                </div>
+                            {% elif message.tags == 'error' %}
+                                <div class="alert alert-danger mt-2">
+                                    {{ message }}
+                                </div>
+                            {% else %}
+                                <div class="alert alert-info mt-2">
+                                    {{ message }}
+                                </div>
+                            {% endif %}
                         {% endfor %}
                     </div>
                 {% endif %}
-
+          
                 <form method="post">
                     {% csrf_token %}
                     <div class="form-group">

@@ -31,6 +31,12 @@ class Curso(models.Model):
     def es_activo(self):
         hoy=date.today()
         return self.fecha_inicio<= hoy <= self.fecha_fin
+    
+    @property
+    def no_ha_empezado(self):
+        hoy = date.today()
+        return hoy < self.fecha_inicio
+    
 class Inscripcion_Curso_Alumno(models.Model):
     alumno=models.ForeignKey(Alumno, on_delete=models.CASCADE)
     curso=models.ForeignKey(Curso, on_delete=models.CASCADE)

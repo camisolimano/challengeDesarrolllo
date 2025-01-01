@@ -41,6 +41,8 @@
                                         <strong>Estado:</strong> 
                                         {% if curso.es_activo %}
                                             Activo
+                                        {% elif curso.no_ha_empezado %}
+                                            Aún no comenzó
                                         {% else %}
                                             Finalizado
                                         {% endif %}

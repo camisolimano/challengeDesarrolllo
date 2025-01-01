@@ -335,8 +335,8 @@ def alta_baja_cursos(request):
                 messages.error(request, "El curso con ese código no existe.")
             return redirect('alta_baja_cursos')
     else:
-        form=AltaBajaAlumnos(request.POST)
-
+        form = AltaBajaAlumnos() 
+        
     return render(request,'alta_baja_cursos.html',{'form': form })
 
 @login_required
