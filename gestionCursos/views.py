@@ -204,10 +204,12 @@ def crear_Curso(request):
             messages.success(request, "El curso se creó exitosamente.")
             return redirect('crear_Curso')
         else:
-            messages.error(request, "Hubo un error al crear el curso.")
+            for field, errors in form.errors.items():
+                for error in errors:
+                    messages.error(request, f"{field.capitalize()}: {error}")      
     return render(request, 'crear_Curso.html', {"form": form})
 
-
+ 
 @login_required
 def borrar_Curso(request):
     if request.method=="POST":

@@ -1,5 +1,5 @@
 from django import forms
-from django.forms import ModelForm
+from django.forms import ModelForm, ValidationError
 from .models import Alumno, Curso,Sede
 from django.forms import ModelForm
 
@@ -31,6 +31,21 @@ class CursoForm(ModelForm):
     class Meta:
         model = Curso
         fields = ['codigo_curso','año_dictado', 'duracion', 'tema','costo_mensual','fecha_inicio','fecha_fin','alumnos','sede']
+    def clean_codigo(self):
+        codigo = self.cleaned_data.get('codigo_curso')
+        if Curso.objects.filter(codigo_curso=codigo).exists():
+            raise ValidationError("Ya existe un curso con este codigo.")
+    
+        return codigo
+    
+    def clean_fecha_inicio(self):
+        fecha_inicio = self.cleaned_data.get('fecha_inicio')
+        año_dictado = self.cleaned_data.get('año_dictado')
+
+        if fecha_inicio:
+            if fecha_inicio.year != año_dictado:
+                raise ValidationError("El año del curso debe coincidir con el año de inicio.")
+        return fecha_inicio
 
 class AltaBajaAlumnos(forms.Form):
    
