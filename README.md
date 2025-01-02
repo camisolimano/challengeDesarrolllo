@@ -1,18 +1,20 @@
 # Gestor de cursos
-Este es un sistema de administración de cursos. El proyecto está implementado con Django como backend y Bootstrap como framework de diseño frontend. El objetivo es gestionar cursos, alumnos, sedes y permitir operaciones administrativas como la creación, eliminación y visualización de los datos.
+Este es un sistema de administración de cursos. El proyecto está implementado con Django como backend y Bootstrap como framework de diseño frontend. El objetivo es facilitar la gestión de cursos, alumnos, sedes y permitir operaciones administrativas como la creación, eliminación y visualización de los datos.
 
 
 El sistema tiene las siguientes funcionalidades:
 
 1. **Administración de Alumnos**:
-   - Listar alumnos con filtros por nombre, apellido, fecha de nacimiento y edad.
-   - Obtener los datos detallados de un alumno.
    - Crear y eliminar alumnos.
-
+   - Verificar su identidad en cuitonline.
+   - Obtener los datos detallados de un alumno.
+   - Listar alumnos con filtros por nombre, apellido, fecha de nacimiento y edad.
+   - Agregar o modificar notas.
+     
 2. **Administración de Cursos**:
-   - Listar cursos con filtros por duración, año, fecha de inicio, sede y costo.
    - Crear y eliminar cursos.
    - Agregar y eliminar alumnos de cursos.
+   - Listar cursos con filtros por duración, año, fecha de inicio, sede y costo.
    - Ver los detalles de un curso con los alumnos que están inscriptos.
 
 3. **Administración de Sedes**:
@@ -21,17 +23,16 @@ El sistema tiene las siguientes funcionalidades:
 
 ### Otras funcionalidades
 
-1. **Notas de los Cursos**:
+1. **Cursos**:
    - Incluir las notas de los alumnos en cada curso (aprobación y nota promedio).
-   - Indicar si los cursos son activos o finalizados.
+   - Estado de los cursos (activo-finalizado-aún no comenzó).
 
 2. **Historial de Cursos de Alumnos**:
-   - Obtener el listado de cursos actuales de un alumno, con nombre, fecha de inicio y sede.
-   - Ver el historial completo de cursos tomados por el alumno.
+   - Listado de cursos actuales de un alumno, con nombre, fecha de inicio y sede.
+   - Historial completo de cursos tomados por el alumno.
 
 3. **Operaciones Avanzadas**:
-   - Permitir modificar las notas de los alumnos.
-   - Incluir paginación en los listados de alumnos, cursos y sedes.
+   - Paginación en los listados de alumnos, cursos y sedes.
 
 4. **Sistema de Login**:
    - Restringir el acceso a ciertas funciones del sistema mediante un sistema de autenticación.
@@ -39,7 +40,7 @@ El sistema tiene las siguientes funcionalidades:
 ###  Adicionales
 
 1. **Búsqueda de DNI**:
-   - Un botón en el campo de DNI que permita buscar información en cuitonline.com.
+   - Facilita la verificacion de datos en cuitonline.com.
 
 2. **Base de Datos**:
-   - Utilización de PostgreSQL para almacenar los datos de la aplicación, con manejo de variables de entorno para la configuración de la base de datos.
+   - Utilización de PostgreSQL para almacenar los datos de la aplicación.
