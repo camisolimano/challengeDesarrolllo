@@ -1,54 +1,88 @@
-from django.db import IntegrityError
-from django.http import JsonResponse
 from django.shortcuts import render, redirect
-from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import login, logout, authenticate
-from django.contrib.auth.models import User
-from django.utils import timezone
 from django.contrib.auth.decorators import login_required
+
+from gestionCursos.utils import track_view_event
 from .models import Alumno, Curso, Sede,Inscripcion_Curso_Alumno
 from .forms import AlumnoForm,CursoForm,AltaBajaAlumnos
 from django.db.models import Q,Avg
 from datetime import date, datetime
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib import messages
-
+from gestionCursos.posthog_client import capture
 # Create your views here.
 
 def home(request):
     return render(request, 'home.html')
 
-@login_required
+@track_view_event("sq_view_home")
 def pagina_principal(request):
     return render(request, 'pagina_principal.html')
         
 def signin(request):
-     if request.user.is_authenticated:
-        return redirect('pagina_principal') 
-     if request.method == 'GET':
-        return render(request, 'signin.html', {"form": AuthenticationForm()})
-     else:
-        user = authenticate(
-            request, username=request.POST['username'], password=request.POST['password'])
-        if user is None:
-            return render(request, 'signin.html', {"form": AuthenticationForm(), "error": "Usuario o contraseña incorrecta."})
-        login(request, user)
+    if request.user.is_authenticated:
         return redirect('pagina_principal')
 
+    if request.method == 'GET':
+        return render(request, 'signin.html', {"form": AuthenticationForm()})
+    else:
+        user = authenticate(
+            request,
+            username=request.POST['username'],
+            password=request.POST['password'],
+        )
+
+        if user is None:
+            capture(
+                user=None,
+                event_name="sq_login_failed",
+                properties={
+                    "username_attempt": request.POST.get('username', ''),
+                },
+            )
+            return render(
+                request,
+                'signin.html',
+                {
+                    "form": AuthenticationForm(),
+                    "error": "Usuario o contraseña incorrecta.",
+                },
+            )
+
+        login(request, user)
+
+        capture(
+            user=user,
+            event_name="sq_user_logged_in",
+            properties={
+                "username": user.username,
+                "is_staff": user.is_staff,
+            },
+        )
+        return redirect('pagina_principal')
    
 @login_required
 def logout_view(request):
     logout(request)
     return redirect('signin')
 
-@login_required
+@track_view_event("sq_view_crear_alumno")
 def crear_Alumno(request):
     if request.method == 'GET':
         return render(request, 'crear_Alumno.html')
     else:
         alumno=AlumnoForm(request.POST)
         if alumno.is_valid():
-            alumno.save()
+            nuevo_alumno = alumno.save()
+            capture(
+                user=request.user,
+                event_name="sq_alumno_created",
+                properties={
+                    "alumno_id": nuevo_alumno.id,
+                    "dni": nuevo_alumno.dni,
+                },
+            )
             messages.success(request, "El alumno se creó exitosamente.")
             return redirect('crear_Alumno')
         else:
@@ -57,7 +91,7 @@ def crear_Alumno(request):
                     messages.error(request, f"{field.capitalize()}: {error}")     
     return render(request, 'crear_Alumno.html', {"form": alumno})
 
- 
+@track_view_event("sq_view_borrar_alumno")
 @login_required
 def borrar_Alumno(request):
     if request.method=="POST":
@@ -73,6 +107,7 @@ def borrar_Alumno(request):
             return render(request, 'borrar_alumno.html', {'error': 'No se encontró un alumno con ese DNI.'})
     return render(request, 'borrar_alumno.html')
 
+@track_view_event("sq_view_detalle_alumno")
 @login_required
 def detalles_Alumno(request):
     dni=request.GET.get('dni','')
@@ -90,6 +125,7 @@ def detalles_Alumno(request):
 
     return render(request,'detalles_Alumno.html', {'alumno' : alumno, 'cursos': cursos})
 
+@track_view_event("sq_view_modificar_nota")
 @login_required
 def modificar_nota(request,alumno_id, codigo_curso):
   
@@ -98,18 +134,31 @@ def modificar_nota(request,alumno_id, codigo_curso):
         inscripcion = None
         try:
             alumno = Alumno.objects.get(id=alumno_id)
+            capture(user=request.user,event_name="sq_alumno_modif",properties={
+                                "dni": alumno.dni
+                            },
+                        )
         except Alumno.DoesNotExist:
             messages.error(request, "El alumno no existe.")
             return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso) 
         
         try:
             curso = Curso.objects.get(codigo_curso=codigo_curso)
+            capture(user=request.user,event_name="sq_curso_modif",properties={
+                                "cod_curso": codigo_curso
+                            },
+                        )
         except Curso.DoesNotExist:
             messages.error(request, "El curso no existe.")
             return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)  
         
         try:
             inscripcion = Inscripcion_Curso_Alumno.objects.get(alumno=alumno, curso=curso)
+            capture(user=request.user,event_name="sq_alumno_curso_modif",properties={
+                                "cod_curso": codigo_curso,
+                                "dni": alumno.dni
+                            },
+                        )
         except Inscripcion_Curso_Alumno.DoesNotExist:
             messages.error(request, "El alumno no está inscrito en este curso.")
             return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)  
@@ -117,18 +166,23 @@ def modificar_nota(request,alumno_id, codigo_curso):
         if request.method=="POST":
             nueva_nota=request.POST.get('nota',None)
             if nueva_nota:
-                try:
                     inscripcion.nota = float(nueva_nota)
                     inscripcion.save()
+                    capture(user=request.user,event_name="sq_carga_nota",properties={
+                                "cod_curso": codigo_curso,
+                                "dni": alumno.dni,
+                                "nota": inscripcion.nota
+                            },
+                        )
                     messages.success(request, f"Nota del alumno {alumno.nombre} {alumno.apellido} modificada con éxito.")
                     return redirect('modificar_nota',alumno_id=alumno.id, codigo_curso=curso.codigo_curso)
-                except ValueError:
-                    messages.error(request, "La nota ingresada no es válida.")
+
             else:
                 messages.error(request, "Por favor ingrese una nota válida.")
         
         return render(request, 'modificar_nota.html', {'alumno': alumno, 'curso': curso, 'inscripcion': inscripcion})
 
+@track_view_event("sq_view_historial_alumnos")
 @login_required
 def historial_Alumno(request,dni):
     try:
@@ -139,7 +193,7 @@ def historial_Alumno(request,dni):
             
     return render(request, 'historial_Alumno.html',{'alumno': alumno, 'inscripciones': inscripciones})
 
-
+@track_view_event("sq_view_listado_alumnos")
 @login_required
 def listado_Alumnos(request):
     errores = []
@@ -189,6 +243,7 @@ def listado_Alumnos(request):
     }
     return render(request,'listado_Alumnos.html', context)
 
+@track_view_event("sq_view_crear_curso")
 @login_required
 def crear_Curso(request):
     if request.method == 'GET':
@@ -208,7 +263,7 @@ def crear_Curso(request):
                     messages.error(request, f"{field.capitalize()}: {error}")      
     return render(request, 'crear_Curso.html', {"form": form})
 
- 
+@track_view_event("sq_view_borrar_curso")
 @login_required
 def borrar_Curso(request):
     if request.method=="POST":
@@ -224,6 +279,7 @@ def borrar_Curso(request):
             return render(request, 'borrar_Curso.html', {'error': 'No se encontró el curso con ese codigo.'})
     return render(request, 'borrar_Curso.html')
 
+@track_view_event("sq_view_listado_cursos")
 @login_required
 def listado_Cursos(request):
     errores = []
@@ -270,7 +326,7 @@ def listado_Cursos(request):
     }
     return render(request,'listado_Cursos.html', context)
 
-
+@track_view_event("sq_view_listado_sede")
 @login_required
 def listado_Sedes(request):
     errores = []
@@ -297,10 +353,10 @@ def listado_Sedes(request):
     except EmptyPage:
             sedes = paginator.page(paginator.num_pages)
 
-   
     return render(request,'listado_Sedes.html', { 'sedes': sedes,
 })
 
+@track_view_event("sq_view_alta_baja_cursos")
 @login_required
 def alta_baja_cursos(request):
     if request.method=="POST":
@@ -321,6 +377,11 @@ def alta_baja_cursos(request):
                         curso.alumnos.add(alumno)
                         Inscripcion_Curso_Alumno.objects.get_or_create(alumno=alumno, curso=curso)
                         messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} agregado al curso.")
+                        capture(user=request.user,event_name="sq_inscripcion_alta",properties={
+                                "dni": alumno.dni,
+                                "curso_codigo": curso.codigo_curso,
+                            },
+                        )
                elif accion == 'baja':
                     if not Inscripcion_Curso_Alumno.objects.filter(alumno=alumno, curso=curso).exists():
                         messages.error(request, f"El alumno {alumno.nombre} {alumno.apellido} no se puede dar de baja porque no esta inscrispto en este curso.")
@@ -330,14 +391,17 @@ def alta_baja_cursos(request):
                         messages.success(request, f"Alumno {alumno.nombre} {alumno.apellido} eliminado del curso.")
             except Alumno.DoesNotExist:
                 messages.error(request, "El alumno con ese dni no existe.")
+                capture(user=request.user,event_name="alumno_no_existe")
             except Curso.DoesNotExist:
                 messages.error(request, "El curso con ese código no existe.")
+                capture(user=request.user,event_name="curso_no_existe",properties={"codigo": cod_curso})
             return redirect('alta_baja_cursos')
     else:
         form = AltaBajaAlumnos() 
 
     return render(request,'alta_baja_cursos.html',{'form': form })
 
+@track_view_event("sq_view_detalle_curso")
 @login_required
 def detalle_Curso(request):
     curso=None
@@ -365,8 +429,10 @@ def detalle_Curso(request):
             curso=None
             alumnos=[]
             return render(request,'detalle_Curso.html', {'error': 'No se encontro el curso'})
+
     return render(request, 'detalle_Curso.html',{'curso': curso, 'inscripciones': inscripciones, 'promedio_notas':promedio_notas})
 
+@track_view_event("sq_view_detalle_sede")
 @login_required
 def detalle_Sede(request):
     sede=None
