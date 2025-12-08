@@ -25,8 +25,18 @@ SECRET_KEY = 'django-insecure-n3z4d_mb8mf%7t%%)%)uj5aq*^yk190%t7^unw1_nqa1nh_830
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    "localhost",
+    "127.0.0.1",
+    "untendered-unsingularly-diana.ngrok-free.dev",
+    "https://allied-realistic-informative-lawsuit.trycloudflare.com",
+    ".trycloudflare.com"
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://untendered-unsingularly-diana.ngrok-free.dev",
+    "https://allied-realistic-informative-lawsuit.trycloudflare.com",
+]
 
 # Application definition
 
@@ -51,9 +61,13 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'gestionCursos.middleware.PostHogExceptionMiddleware',
+    'gestionCursos.middleware.PostHogCSPMiddleware',
 ]
 
 ROOT_URLCONF = 'challenge.urls'
+
+X_FRAME_OPTIONS = 'ALLOWALL'
 
 TEMPLATES = [
     {
@@ -78,13 +92,9 @@ WSGI_APPLICATION = 'challenge.wsgi.application'
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'challdes',
-        'USER': 'postgres',
-        'PASSWORD':'1234',
-        'HOST':'localhost',
-        'PORT': '5432',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -119,6 +129,8 @@ USE_I18N = True
 
 USE_TZ = True
 
+POSTHOG_API_KEY = "phc_7q089LLc988GcriF3FrIDeXuEfMIMgfGdw4Pt87oYBk"
+POSTHOG_HOST = "https://us.i.posthog.com"
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
