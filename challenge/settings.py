@@ -31,7 +31,7 @@ ALLOWED_HOSTS = [
     "untendered-unsingularly-diana.ngrok-free.dev",
     "https://allied-realistic-informative-lawsuit.trycloudflare.com",
     ".trycloudflare.com",
-    "https://user-behavior-analytics-demo-75a80101be86.herokuapp.com"
+    "user-behavior-analytics-demo-75a80101be86.herokuapp.com",
 ]
 
 CSRF_TRUSTED_ORIGINS = [
