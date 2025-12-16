@@ -47,6 +47,9 @@ CSP_DEFAULT_SRC = ("'self'", "https://us.i.posthog.com")
 CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://us.i.posthog.com")
 CSP_CONNECT_SRC = ("'self'", "https://us.i.posthog.com")
 
+# Para Heroku
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -70,6 +73,8 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gestionCursos.middleware.PostHogExceptionMiddleware',
     'gestionCursos.middleware.PostHogCSPMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware', 
+
 ]
 
 ROOT_URLCONF = 'challenge.urls'
