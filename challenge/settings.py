@@ -40,6 +40,12 @@ CSRF_TRUSTED_ORIGINS = [
 ]
 
 # Application definition
+SECURE_CROSS_ORIGIN_OPENER_POLICY = None
+
+# Si usas django-csp, agrega:
+CSP_DEFAULT_SRC = ("'self'", "https://us.i.posthog.com")
+CSP_SCRIPT_SRC = ("'self'", "'unsafe-inline'", "https://us.i.posthog.com")
+CSP_CONNECT_SRC = ("'self'", "https://us.i.posthog.com")
 
 INSTALLED_APPS = [
     'django.contrib.admin',
