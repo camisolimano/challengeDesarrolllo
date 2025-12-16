@@ -1,167 +1,73 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>DBlandIT - Página Principal</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            height: 100vh;
-            margin: 0;
-            padding: 0;
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
+{% extends 'base.html' %}
 
-            flex-direction: column;
-        }
-        .container {
-                flex: 1; 
-         }
-        .navbar {
-            background-color: #ff4c29;
-        }
+{% block title %}DBlandIT - Página Principal{% endblock %}
 
-        .navbar-brand, .navbar-nav .nav-link {
-            color: #fff !important;
-        }
+{% block extra_css %}
 
-        .navbar-nav {
-            margin: 0 auto;
-        }
+.navbar-nav {
+    margin: 0 auto;
+}
+.dropdown-menu .dropdown-item {
+    color: #000;
+}
+.logout {
+    position: absolute;
+    left: 10px;
+    color: #fff !important;
+}
+.main-container {
+    padding: 40px 20px;
+    text-align: center;
+    flex: 1;
+}
+.circle-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 40px;
+    margin-top: 60px;
+}
+.circle {
+    width: 100px;
+    height: 100px;
+    border: 2px solid #ff4c29;
+    color: #ff4c29;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    font-weight: bold;
+    text-decoration: none;
+    transition: transform 0.3s;
+    background-color: transparent;
+}
+.circle:hover {
+    transform: scale(1.1);
+}
+.circle-label {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #333;
+    text-align: center;
+}
+.row-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+}
+{% endblock %}
 
-        .dropdown-menu .dropdown-item {
-            color: #000;
-        }
+{% block navbar_extra %}
+{% if user.is_authenticated %}
+    <a href="{% url 'logout' %}" class="btn btn-danger ml-auto">Cerrar Sesión</a>
+{% else %}
+    <a href="{% url 'signin' %}" class="btn btn-primary ml-auto">Iniciar Sesión</a>
+{% endif %}
+{% endblock %}
 
-        .logout {
-            position: absolute;
-            left: 10px;
-            color: #fff !important;
-        }
-
-        .main-container {
-            padding: 40px 20px;
-            text-align: center;
-            flex: 1;
-        }
-
-        .circle-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .circle {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #ff4c29;
-            color: #ff4c29;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-weight: bold;
-            text-decoration: none;
-            transition: transform 0.3s;
-            background-color: transparent;
-        }
-
-        .circle:hover {
-            transform: scale(1.1);
-        }
-
-        .circle-label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-        }
-
-        .row-container {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 40px;
-            margin-top: 40px;
-        }
-        footer {
-                background-color: #4d4d4d; 
-                text-align: center;
-                padding: 10px 0;
-                color: #f1ebeb;
-                margin-top: auto; 
-            }
-    </style>
-    <script>
-    !function(t,e){var o,n,p,r;e.__SV||(window.posthog && window.posthog.__loaded)||(window.posthog=e,e._i=[],e.init=function(i,s,a){function g(t,e){var o=e.split(".");2==o.length&&(t=t[o[0]],e=o[1]),t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}}(p=t.createElement("script")).type="text/javascript",p.crossOrigin="anonymous",p.async=!0,p.src=s.api_host.replace(".i.posthog.com","-assets.i.posthog.com")+"/static/array.js",(r=t.getElementsByTagName("script")[0]).parentNode.insertBefore(p,r);var u=e;for(void 0!==a?u=e[a]=[]:a="posthog",u.people=u.people||[],u.toString=function(t){var e="posthog";return"posthog"!==a&&(e+="."+a),t||(e+=" (stub)"),e},u.people.toString=function(){return u.toString(1)+".people (stub)"},o="init Rr Mr fi Cr Ar ci Tr Fr capture Mi calculateEventProperties Lr register register_once register_for_session unregister unregister_for_session Hr getFeatureFlag getFeatureFlagPayload isFeatureEnabled reloadFeatureFlags updateEarlyAccessFeatureEnrollment getEarlyAccessFeatures on onFeatureFlags onSurveysLoaded onSessionId getSurveys getActiveMatchingSurveys renderSurvey displaySurvey canRenderSurvey canRenderSurveyAsync identify setPersonProperties group resetGroups setPersonPropertiesForFlags resetPersonPropertiesForFlags setGroupPropertiesForFlags resetGroupPropertiesForFlags reset get_distinct_id getGroups get_session_id get_session_replay_url alias set_config startSessionRecording stopSessionRecording sessionRecordingStarted captureException loadToolbar get_property getSessionProperty Ur jr createPersonProfile zr kr Br opt_in_capturing opt_out_capturing has_opted_in_capturing has_opted_out_capturing get_explicit_consent_status is_capturing clear_opt_in_out_capturing Dr debug M Nr getPageViewId captureTraceFeedback captureTraceMetric $r".split(" "),n=0;n<o.length;n++)g(u,o[n]);e._i.push([i,s,a])},e.__SV=1)}(document,window.posthog||[]);
-    posthog.init('phc_7q089LLc988GcriF3FrIDeXuEfMIMgfGdw4Pt87oYBk', {
-        api_host: 'https://us.i.posthog.com',
-        autocapture: true,
-        capture_pageview: true, 
-        capture_pageleave: true
-    })
-</script>
-</head>
-<body>
-
-<nav class="navbar navbar-expand-lg">
-    <a class="navbar-brand" href="#">DBlandIT</a>
-    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-    </button>
-    <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="alumnosDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Alumnos
-                </a>
-                <div class="dropdown-menu" aria-labelledby="alumnosDropdown">
-                    <a class="dropdown-item" href="{% url 'crear_Alumno' %}">Crear Alumno</a>
-                    <a class="dropdown-item" href="{% url 'borrar_Alumno' %}">Eliminar Alumno</a>
-                    <a class="dropdown-item" href="{% url 'alta_baja_cursos' %}">Dar de Baja/Alta Alumno</a>
-                    <a class="dropdown-item" href="{% url 'listado_Alumnos' %}">Listado de Alumnos</a>
-                    <a class="dropdown-item" href="{% url 'detalles_Alumno' %}">Buscar Alumno - Calificaciones</a>
-
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="cursosDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Cursos
-                </a>
-                <div class="dropdown-menu" aria-labelledby="cursosDropdown">
-                    <a class="dropdown-item" href="{% url 'crear_Curso' %}">Crear Curso</a>
-                    <a class="dropdown-item" href="{% url 'borrar_Curso' %}">Eliminar Curso</a>
-                    <a class="dropdown-item" href="{% url 'listado_Cursos' %}">Listado de Cursos</a>
-                    <a class="dropdown-item" href="{% url 'detalle_Curso' %}">Buscar Curso</a>
-
-                </div>
-            </li>
-            <li class="nav-item dropdown">
-                <a class="nav-link dropdown-toggle" href="#" id="sedesDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    Sedes
-                </a>
-                <div class="dropdown-menu" aria-labelledby="sedesDropdown">
-                    <a class="dropdown-item" href="{% url 'detalle_Sede' %}">Buscar Sede</a>
-                    <a class="dropdown-item" href="{% url 'listado_Sedes' %}">Listado de Sedes</a>
-
-                </div>
-            </li>
-        </ul>
-        {% if user.is_authenticated %}
-            <a href="{% url 'logout' %}" class="btn btn-danger ml-auto">Cerrar Sesión</a>
-        {% else %}
-            <a href="{% url 'signin' %}" class="btn btn-primary ml-auto">Iniciar Sesión</a>
-        {% endif %}
-    </div>
-</nav>
-
+{% block content %}
 <div class="main-container">
     <h2>¿Qué deseas hacer?</h2>
     <div class="circle-container">
@@ -183,7 +89,7 @@
         </div>
         <div>
             <a href="{% url 'detalles_Alumno' %}" class="circle">5</a>
-            <div class="circle-label" id="label-calificaciones">Buscar Alumno <br> Calificaciones </div>
+            <div class="circle-label" id="label-calificaciones">Buscar Alumno <br> Calificaciones</div>
         </div>
     </div>
     <div class="row-container">
@@ -212,11 +118,10 @@
             <div class="circle-label">Alta o baja de<br> alumno a curso</div>
         </div>
     </div>
-    
 </div>
-<footer>
-    <p>&copy; 2025 DBlandIT. Todos los derechos reservados.</p>
-</footer>
+{% endblock %}
+
+{% block extra_js %}
 <script>
 posthog.onFeatureFlags(function () {
     const variant = posthog.getFeatureFlag('claridad-del-bot-n-de-calificaciones')
@@ -227,9 +132,4 @@ posthog.onFeatureFlags(function () {
     }
 })
 </script>
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-</body>
-</html>
-
+{% endblock %}
