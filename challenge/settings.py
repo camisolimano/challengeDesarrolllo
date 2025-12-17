@@ -25,8 +25,16 @@ SECRET_KEY = 'django-insecure-n3z4d_mb8mf%7t%%)%)uj5aq*^yk190%t7^unw1_nqa1nh_830
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [
+    'interim-jay-pac-october.trycloudflare.com',
+    'trycloudflare.com',
+    'visibility-schemes-cricket-favorite.trycloudflare.com',      
+    '127.0.0.1',    
+]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.trycloudflare.com",
+]
 
 # Application definition
 
@@ -84,7 +92,7 @@ DATABASES = {
         'USER': 'postgres',
         'PASSWORD':'1234',
         'HOST':'localhost',
-        'PORT': '5432',
+        'PORT': '5433',
     }
 }
 
