@@ -16,6 +16,7 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
@@ -27,7 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = [
     'interim-jay-pac-october.trycloudflare.com',
-    'trycloudflare.com',
     'visibility-schemes-cricket-favorite.trycloudflare.com',      
     '127.0.0.1',    
 ]
@@ -95,7 +95,6 @@ DATABASES = {
         'PORT': '5433',
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
