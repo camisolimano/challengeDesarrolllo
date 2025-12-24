@@ -55,7 +55,19 @@
                 api_host: 'https://us.i.posthog.com',
                 autocapture: true,
                 capture_pageview: true,
-                capture_pageleave: true
+                capture_pageleave: true,
+                session_recording: {
+                maskAllInputs: true,
+                maskTextSelector: '*'
+                },
+               before_send: function(event) {
+                if (!event.properties) {
+                    event.properties = {};
+                }
+                event.properties['test_before_send'] = 'probando';
+                event.properties['timestamp_modificado'] = new Date().toISOString();
+                return event;
+            }
             })
         </script>
     </head>
