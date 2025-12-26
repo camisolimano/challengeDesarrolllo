@@ -72,7 +72,6 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'gestionCursos.middleware.PostHogExceptionMiddleware',
-    'gestionCursos.middleware.PostHogCSPMiddleware',
     'whitenoise.middleware.WhiteNoiseMiddleware', 
 
 
