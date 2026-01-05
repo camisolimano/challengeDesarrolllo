@@ -13,6 +13,9 @@
                                 <div class="alert alert-success mt-2">
                                     {{ message }}
                                 </div>
+                                <script>
+                                posthog.capture('sq_alumno_created_f')
+                                </script>
                             {% elif message.tags == 'error' %}
                                 <div class="alert alert-danger mt-2">
                                     {{ message }}

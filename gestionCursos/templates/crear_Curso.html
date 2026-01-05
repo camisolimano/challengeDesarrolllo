@@ -11,6 +11,9 @@
                             {% if message.tags == 'success' %}
                                 <div class="alert alert-success mt-2">
                                     {{ message }}
+                                    <script>
+                                    posthog.capture('sq_curso_created_f')
+                                    </script>
                                 </div>
                             {% elif message.tags == 'error' %}
                                 <div class="alert alert-danger mt-2">

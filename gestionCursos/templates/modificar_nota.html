@@ -13,6 +13,9 @@
         </div>
 
         <button type="submit" class="btn btn-primary">Guardar Nota</button>
+        <script>
+        posthog.capture('sq_modificar_nota_f')
+        </script>
     </form>
 
     <p><strong>Curso:</strong> {{ curso.tema }} (Código: {{ curso.codigo_curso }})</p>
