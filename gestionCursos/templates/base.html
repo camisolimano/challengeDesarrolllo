@@ -71,6 +71,8 @@
             if (!ALLOWED_EVENTS.has(event.event)) {
                 return null;
             }
+            event.properties = event.properties || {};
+            event.properties.timestamp_modificado = new Date().toISOString();
             return event;
             }
         });
