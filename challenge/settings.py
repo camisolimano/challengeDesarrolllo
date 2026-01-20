@@ -32,6 +32,7 @@ ALLOWED_HOSTS = [
     "https://allied-realistic-informative-lawsuit.trycloudflare.com",
     ".trycloudflare.com",
     "user-behavior-analytics-demo-75a80101be86.herokuapp.com",
+    "user-behavior-analytics-demo-2-e0a29e1846f6.herokuapp.com"
 ]
 
 CSRF_TRUSTED_ORIGINS = [
