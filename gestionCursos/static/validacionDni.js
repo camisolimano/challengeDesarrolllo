@@ -11,6 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
             ph.capture("sq_dni_search_clicked", {
                 dni_length: dni,
                 is_valid_format: isValidDni,
+                client_id: "client_2",
+
             });
         }
 
