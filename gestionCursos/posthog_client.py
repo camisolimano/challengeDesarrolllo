@@ -12,9 +12,13 @@ def capture(user, event_name: str, properties: dict | None = None) -> None:
         distinct_id = str(user.id)
     else:
         distinct_id = "anonymous"
+    
+    props = dict(properties or {})
+
+    props.setdefault("client_id", "client_1")
 
     posthog_client.capture(
         distinct_id=distinct_id,
         event=event_name,
-        properties=properties or {},
+        properties=props,
     )

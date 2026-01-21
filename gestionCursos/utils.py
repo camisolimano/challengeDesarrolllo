@@ -17,6 +17,7 @@ def track_view_event(event_name: str):
                     properties={
                         "path": request.path,
                         "method": request.method,
+                        "client_id": "client_1",
                     }
                 )
 
