@@ -67,6 +67,10 @@
             capture_pageleave: false,
             disable_session_recording: true,
             disable_toolbar: true,
+            disable_surveys: true,
+            capture_dead_clicks: false,
+            rageclick: false,
+            enable_heatmaps: false,
             before_send: function (event) {
             if (!ALLOWED_EVENTS.has(event.event)) {
                 return null;
