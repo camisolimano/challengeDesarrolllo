@@ -54,21 +54,6 @@
             posthog.init('phc_7q089LLc988GcriF3FrIDeXuEfMIMgfGdw4Pt87oYBk', {
                 api_host: 'https://us.i.posthog.com',
                 opt_out_capturing_by_default: true,
-                autocapture: true,
-                capture_pageview: true,
-                capture_pageleave: true,
-                session_recording: {
-                maskAllInputs: true,
-                maskTextSelector: '*'
-                },
-               before_send: function(event) {
-                if (!event.properties) {
-                    event.properties = {};
-                }
-                event.properties['test_before_send'] = 'probando';
-                event.properties['timestamp_modificado'] = new Date().toISOString();
-                return event;
-            }
             })
         </script>
     </head>
